@@ -1,0 +1,1919 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Admin — Lendas do Cartola 2026</title>
+  <link rel="icon" type="image/png" href="/mascote.png">
+  <script src="https://unpkg.com/feather-icons"></script>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .admin-container { max-width: 1440px; margin: 2rem auto; padding: 0 1.5rem; }
+    .admin-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 1.5rem; flex-wrap: wrap; gap: 16px;
+    }
+    .admin-grid { display: grid; grid-template-columns: 400px 1fr; gap: 24px; }
+    @media (max-width: 1060px) { .admin-grid { grid-template-columns: 1fr; } }
+    .form-group { margin-bottom: 14px; }
+    .form-label { display: block; font-size: 0.84rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 6px; }
+    .form-input, .form-select {
+      width: 100%; box-sizing: border-box;
+      background: #0d121a; border: 1px solid rgba(255,255,255,0.13); border-radius: var(--radius-sm);
+      color: #ffffff; padding: 10px 14px; font-size: 0.88rem; font-family: inherit; outline: none; transition: border 0.2s ease;
+    }
+    .form-input:focus, .form-select:focus { border-color: var(--cartola-orange); box-shadow: 0 0 0 2px rgba(255,98,0,0.2); }
+    .player-table { width: 100%; border-collapse: collapse; }
+    .player-table th, .player-table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .player-table th { color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; font-weight: 700; }
+    .login-overlay {
+      position: fixed; inset: 0; background: rgba(8,12,18,0.95); backdrop-filter: blur(12px);
+      z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 1.5rem;
+    }
+    .login-card {
+      background: var(--bg-card); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: var(--radius-lg); padding: 32px; max-width: 420px; width: 100%;
+      box-shadow: var(--shadow-main); animation: popIn 0.3s ease;
+    }
+    @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+    /* Draggable Pitch */
+    .drag-pitch-wrapper {
+      position: relative; width: 100%; padding-top: 60%; /* aspect ratio 5:3 */
+      background: #1a4a1a;
+      background-image:
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 1px, transparent 1px, transparent 60px),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 1px, transparent 1px, transparent 80px);
+      border-radius: 12px; border: 2px solid rgba(255,255,255,0.15); overflow: hidden;
+      cursor: default; user-select: none;
+    }
+    .drag-pitch-inner { position: absolute; inset: 0; }
+    .drag-pitch-line { position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: rgba(255,255,255,0.2); }
+    .drag-pitch-circle {
+      position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+      width: 80px; height: 80px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2);
+    }
+    .drag-pitch-box-top {
+      position: absolute; left: 50%; transform: translateX(-50%);
+      top: 0; width: 60%; height: 25%; border: 1px solid rgba(255,255,255,0.2); border-top: none;
+    }
+    .drag-pitch-box-bot {
+      position: absolute; left: 50%; transform: translateX(-50%);
+      bottom: 0; width: 60%; height: 25%; border: 1px solid rgba(255,255,255,0.2); border-bottom: none;
+    }
+    .draggable-player {
+      position: absolute; cursor: grab; display: flex; flex-direction: column; align-items: center;
+      transform: translate(-50%, -50%); transition: box-shadow 0.15s;
+      z-index: 10;
+    }
+    .draggable-player:active { cursor: grabbing; z-index: 100; }
+    .draggable-player img {
+      width: 44px; height: 44px; border-radius: 50%; object-fit: cover;
+      border: 2px solid rgba(255,255,255,0.5);
+      background: #0d121a; box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    }
+    .draggable-player .dp-name {
+      font-size: 0.6rem; font-weight: 800; color: #fff; background: rgba(0,0,0,0.8);
+      padding: 1px 5px; border-radius: 4px; margin-top: 2px; white-space: nowrap;
+      max-width: 70px; text-align: center; overflow: hidden; text-overflow: ellipsis;
+    }
+    .draggable-player .dp-status-dot {
+      position: absolute; top: 0; right: 0; width: 10px; height: 10px; border-radius: 50%; border: 1px solid #0d121a;
+    }
+    .draggable-player.status-7 .dp-status-dot { background: #10b981; }
+    .draggable-player.status-2 .dp-status-dot { background: #fbbf24; animation: pulseDot 1.2s infinite; }
+    .draggable-player.status-5 .dp-status-dot { background: #ef4444; }
+    .draggable-player.status-3 .dp-status-dot { background: #dc2626; }
+    @keyframes pulseDot {
+      0%,100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.5); opacity: 0.6; }
+    }
+    .pitch-save-btn { margin-top: 10px; }
+  </style>
+</head>
+<body>  <!-- Login Modal Overlay -->
+  <div class="login-overlay" id="login-overlay">
+    <div class="login-card">
+      <div style="text-align: center; margin-bottom: 24px;">
+        <div class="mascot-login-container">
+          <img src="/images/mascote.png" alt="Mascote Lendas do Cartola" class="mascot-login-img">
+        </div>
+        <div class="logo-badge" style="display: inline-block; margin-bottom: 12px;">ADMIN LENDAS</div>
+        <h2 style="font-size: 1.4rem; font-weight: 800;">Acesso ao Painel Admin</h2>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">Exclusivo para administradores e editores de scouts</p>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Usuário</label>
+        <input type="text" id="login-user" class="form-input" placeholder="Digite seu usuário">
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Senha</label>
+        <input type="password" id="login-pass" class="form-input" placeholder="Digite sua senha">
+      </div>
+      
+      <div id="login-error-msg" style="color: #ef4444; font-size: 0.85rem; margin-bottom: 12px; display: none;"></div>
+      
+      <button class="nav-btn nav-btn-primary" style="width: 100%; justify-content: center; padding: 12px; margin-top: 8px;" onclick="handleLogin()">
+        <i data-feather="lock"></i> Entrar no Painel
+      </button>
+    </div>
+  </div>
+
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="/" class="brand-logo">
+        <img src="/images/mascote.png" alt="Mascote Lendas" class="mascot-navbar">
+        <div class="brand-title">LENDAS DO CARTOLA <span>PAINEL ADMIN</span></div>
+      </a>
+      <div class="nav-actions">
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; font-weight: 700; color: var(--text-secondary); background: rgba(255,255,255,0.06); padding: 6px 12px; border-radius: 9999px;">
+          <i data-feather="user-check" style="width: 16px; height: 16px; color: var(--cartola-orange);"></i>
+          <span id="active-user-name">Administrador</span>
+        </div>
+        <a href="/" class="nav-btn"><i data-feather="external-link"></i> Ver Website</a>
+        <button class="nav-btn" onclick="handleLogout()" style="color: #ef4444; border-color: rgba(239,68,68,0.3);">
+          <i data-feather="log-out"></i> Sair
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="admin-container" id="admin-main-content">
+    <div class="admin-header">
+      <div>
+        <h1 style="font-size: 1.7rem; font-weight: 900;">Gerenciamento Tático, Elencos &amp; Escudos</h1>
+        <p style="color: var(--text-muted); font-size: 0.88rem;">Arraste os jogadores no campinho ao vivo, salve formações e gerencie escudos.</p>
+      </div>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <button class="nav-btn" style="background: rgba(16,185,129,0.15); color: #10b981; border-color: rgba(16,185,129,0.4);" onclick="syncOfficialCartola()">
+          <i data-feather="refresh-cw"></i> Sincronizar c/ Cartola
+        </button>
+        <button class="nav-btn nav-btn-primary" onclick="exportData()">
+          <i data-feather="download"></i> Backup JSON
+        </button>
+      </div>
+    </div>
+
+    <!-- API Endpoints Box -->
+    <div class="side-card" style="margin-bottom: 24px; border-color: rgba(255,98,0,0.3);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <h3 style="font-size: 1rem; font-weight: 800; color: var(--cartola-orange); display: flex; align-items: center; gap: 8px;">
+          <i data-feather="code"></i> Endpoints da API Pública
+        </h3>
+        <span class="pill-count" style="background: rgba(255,98,0,0.2); color: var(--cartola-orange);">CORS Liberado</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; font-size: 0.78rem;">
+        <a href="/api/mercado/status" target="_blank" class="nav-btn" style="justify-content: flex-start;"><i data-feather="info"></i> /api/mercado/status</a>
+        <a href="/api/partidas" target="_blank" class="nav-btn" style="justify-content: flex-start;"><i data-feather="calendar"></i> /api/partidas</a>
+        <a href="/api/atletas/mercado" target="_blank" class="nav-btn" style="justify-content: flex-start;"><i data-feather="users"></i> /api/atletas/mercado</a>
+        <a href="/api/clubes" target="_blank" class="nav-btn" style="justify-content: flex-start;"><i data-feather="shield"></i> /api/clubes</a>
+        <a href="/api/top_destaques" target="_blank" class="nav-btn" style="justify-content: flex-start;"><i data-feather="star"></i> /api/top_destaques</a>
+      </div>
+    </div>
+
+    <!-- Global Display Settings Box -->
+    <div class="side-card" style="margin-bottom: 20px; border-color: rgba(255,98,0,0.35); background: linear-gradient(135deg, rgba(255,98,0,0.06), rgba(19,25,34,0.95));">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <h3 style="font-size: 1rem; font-weight: 800; color: var(--cartola-orange); display: flex; align-items: center; gap: 8px;">
+            <i data-feather="image"></i> Estilo Visual das Imagens dos Jogadores (Campinho &amp; Telas)
+          </h3>
+          <p style="color: var(--text-muted); font-size: 0.8rem; margin-top: 2px;">
+            Escolha se o sistema deve exibir as fotos das pastas locais dos clubes ou o uniforme oficial da API do Cartola.
+          </p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <select id="global-foto-mode-select" class="form-select" style="min-width: 280px; font-weight: 700;" onchange="updateFotoMode(this.value)">
+            <option value="local">📸 Fotos Personalizadas das Pastas Locais (API Nossa)</option>
+            <option value="cartola">👕 Uniforme / Estilo Oficial da API do Cartola</option>
+          </select>
+          <span id="foto-mode-status" style="font-size: 0.78rem; color: #10b981; font-weight: 700; display: none;">Salvo!</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-grid">
+
+      <!-- Left Column -->
+      <div>
+        <!-- Club + Tactics -->
+        <div class="side-card" style="margin-bottom: 20px;">
+          <h3 class="side-card-title">1. Clube + Formação Tática</h3>
+          <div class="form-group">
+            <label class="form-label">Clube</label>
+            <select class="form-select" id="admin-club-select" onchange="onClubSelectChange()"></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Formação Tática</label>
+            <select class="form-select" id="admin-formation-select" onchange="updateClubFormation()">
+              <option value="4-3-3">4-3-3 (Padrão)</option>
+              <option value="4-4-2">4-4-2</option>
+              <option value="3-5-2">3-5-2</option>
+              <option value="3-4-3">3-4-3</option>
+              <option value="4-5-1">4-5-1</option>
+              <option value="5-3-2">5-3-2</option>
+            </select>
+          </div>
+
+          <!-- Escudo Management -->
+          <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: var(--radius-sm); margin-top: 8px;">
+            <label class="form-label">Escudo do Clube</label>
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+              <img src="" id="selected-club-crest" style="width: 44px; height: 44px; object-fit: contain;">
+              <div>
+                <div id="selected-club-name" style="font-weight: 700;">—</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted);">Fonte do escudo atual</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="nav-btn" style="flex: 1; justify-content: center; font-size: 0.78rem;" onclick="resetOfficialCrest()">Usar Oficial Cartola</button>
+              <label class="nav-btn nav-btn-primary" style="flex: 1; justify-content: center; font-size: 0.78rem; cursor: pointer;">
+                Subir Escudo
+                <input type="file" id="upload-crest-file" accept="image/*" style="display: none;" onchange="uploadCustomCrest(this)">
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add Player -->
+        <div class="side-card">
+          <h3 class="side-card-title">2. Cadastrar Jogador / Subir Foto</h3>
+          <div class="form-group">
+            <label class="form-label">Nome / Apelido</label>
+            <input type="text" class="form-input" id="new-player-name" placeholder="Ex: Pedro, Gerson, Ganso...">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Posição</label>
+            <select class="form-select" id="new-player-pos">
+              <option value="1">Goleiro</option>
+              <option value="2">Lateral</option>
+              <option value="3">Zagueiro</option>
+              <option value="4">Meia</option>
+              <option value="5" selected>Atacante</option>
+              <option value="6">Técnico</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Status</label>
+            <select class="form-select" id="new-player-status">
+              <option value="7">✅ Provável</option>
+              <option value="2">⚠️ Dúvida</option>
+              <option value="6">⚪ Nulo / Banco</option>
+              <option value="5">❌ Lesionado (DM)</option>
+              <option value="3">🚫 Suspenso</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Preço (C$)</label>
+            <input type="number" step="0.5" class="form-input" id="new-player-price" value="8.0">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Foto de Rosto (PNG/JPG)</label>
+            <input type="file" class="form-input" id="new-player-file" accept="image/*">
+          </div>
+          <button class="nav-btn nav-btn-primary" style="width: 100%; justify-content: center;" onclick="savePlayerForm()">
+            <i data-feather="user-plus"></i> Salvar no Elenco
+          </button>
+        </div>
+      </div>
+
+      <!-- Right Column: Tabs (Campinho Drag + Tabela) -->
+      <div>
+        <!-- Tab Nav -->
+        <div style="display: flex; gap: 2px; margin-bottom: 16px; flex-wrap: wrap;">
+          <button id="tab-pitch-btn" class="nav-btn nav-btn-primary" onclick="switchTab('pitch')" style="border-radius: 8px 0 0 8px;">
+            <i data-feather="layout"></i> Campinho Interativo
+          </button>
+          <button id="tab-table-btn" class="nav-btn" onclick="switchTab('table')">
+            <i data-feather="list"></i> Tabela do Elenco
+          </button>
+          <button id="tab-h2h-btn" class="nav-btn" onclick="switchTab('h2h')" style="border-radius: 0 8px 8px 0;">
+            <i data-feather="crosshair"></i> Confronto Direto &amp; Últimos Jogos (H2H)
+          </button>
+        </div>
+
+        <!-- Tab: Draggable Pitch -->
+        <div id="tab-pitch" class="side-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+            <div>
+              <h2 style="font-size: 1.2rem; font-weight: 800;">Campinho Arrastável (Titulares &amp; Dúvidas)</h2>
+              <p style="color: var(--text-muted); font-size: 0.8rem;">Reflete os prováveis e dúvidas definidos na Tabela do Elenco. Arraste para reposicionar.</p>
+            </div>
+            <button class="nav-btn nav-btn-primary pitch-save-btn" onclick="savePitchPositions()">
+              <i data-feather="save"></i> Salvar Posições
+            </button>
+          </div>
+
+          <div class="drag-pitch-wrapper" id="drag-pitch-wrapper">
+            <div class="drag-pitch-inner" id="drag-pitch-inner">
+              <div class="drag-pitch-line"></div>
+              <div class="drag-pitch-circle"></div>
+              <div class="drag-pitch-box-top"></div>
+              <div class="drag-pitch-box-bot"></div>
+              <!-- Players injected via JS -->
+            </div>
+          </div>
+
+          <div style="margin-top: 10px; font-size: 0.76rem; color: var(--text-muted); display: flex; gap: 16px; flex-wrap: wrap;">
+            <span>🟢 Provável</span><span style="color:#fbbf24; font-weight:700;">🟡 Dúvida (Piscando)</span><span>🔴 Lesionado</span><span>⛔ Suspenso</span><span>⚪ Nulo/Banco</span>
+          </div>
+        </div>
+
+        <!-- Tab: Table -->
+        <div id="tab-table" class="side-card" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 12px;">
+            <div>
+              <h2 id="squad-table-title" style="font-size: 1.2rem; font-weight: 800;">Tabela do Elenco</h2>
+              <span style="color: var(--text-muted); font-size: 0.82rem;" id="squad-total-count">0 Atletas</span>
+            </div>
+            
+            <!-- Filters and Actions -->
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+              <!-- Dropdown de Filtro por Posição -->
+              <select class="form-select" id="table-pos-filter" onchange="filterTable()" style="max-width: 170px; padding: 7px 12px; font-size: 0.84rem;">
+                <option value="all">Todas as Posições</option>
+                <option value="1">🧤 Goleiros</option>
+                <option value="2">🏃 Laterais</option>
+                <option value="3">🛡️ Zagueiros</option>
+                <option value="4">🎯 Meias</option>
+                <option value="5">⚽ Atacantes</option>
+                <option value="6">📋 Técnicos</option>
+              </select>
+
+              <!-- Busca rápida por nome -->
+              <input type="text" class="form-input" id="table-search" placeholder="Buscar por nome..." style="max-width: 170px; padding: 7px 12px; font-size: 0.84rem;" onkeyup="filterTable()">
+
+              <!-- Botão Salvar Todas as Alterações -->
+              <button class="nav-btn nav-btn-primary" id="btn-save-squad-batch" onclick="saveAllSquadChanges()" style="padding: 8px 16px; font-size: 0.84rem; font-weight: 800;">
+                <i data-feather="save"></i> Salvar Alterações
+              </button>
+            </div>
+          </div>
+
+          <div id="squad-save-alert" style="display: none; padding: 10px 14px; border-radius: var(--radius-sm); margin-bottom: 12px; font-size: 0.85rem; font-weight: 700; background: rgba(16,185,129,0.15); border: 1px solid #10b981; color: #10b981;">
+            <i data-feather="check-circle" style="width: 16px; height: 16px; vertical-align: middle;"></i> Alterações salvas com sucesso no banco de dados!
+          </div>
+
+          <div style="overflow-x: auto; max-height: 680px;">
+            <table class="player-table">
+              <thead>
+                <tr>
+                  <th>Rosto</th><th>Nome / Apelido</th><th>Posição</th><th>Preço</th><th>Status do Atleta</th><th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="admin-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tab: Confronto Direto & Últimos Jogos (H2H) -->
+        <div id="tab-h2h" class="side-card" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 14px;">
+            <div>
+              <h2 style="font-size: 1.3rem; font-weight: 900; color: #fff; display: flex; align-items: center; gap: 8px;">
+                <i data-feather="crosshair" style="color: var(--cartola-orange);"></i> Módulo de Confronto Direto &amp; Últimos 5 Jogos
+              </h2>
+              <p style="color: var(--text-muted); font-size: 0.82rem;">Configure o histórico do duelo, placares dos últimos 5 jogos ou envie uma imagem 500x500.</p>
+            </div>
+            
+            <div style="display: flex; gap: 8px;">
+              <button class="nav-btn nav-btn-primary" onclick="saveCurrentH2HData()" style="font-weight: 800; padding: 10px 18px;">
+                <i data-feather="save"></i> Salvar Confronto H2H
+              </button>
+            </div>
+          </div>
+
+          <div id="h2h-save-alert" style="display: none; padding: 10px 14px; border-radius: var(--radius-sm); margin-bottom: 14px; font-size: 0.85rem; font-weight: 700; background: rgba(16,185,129,0.15); border: 1px solid #10b981; color: #10b981;">
+            <i data-feather="check-circle" style="width: 16px; height: 16px; vertical-align: middle;"></i> Dados do confronto salvos com sucesso!
+          </div>
+
+          <!-- Seleção da Partida da Rodada -->
+          <div class="form-group" style="background: rgba(0,0,0,0.3); padding: 14px; border-radius: var(--radius-md); border: 1px solid rgba(255,255,255,0.08);">
+            <label class="form-label" style="font-size: 0.9rem; color: #fff;">Selecione o Jogo / Confronto da Rodada:</label>
+            <select class="form-select" id="h2h-match-select" onchange="onH2HMatchSelectChange()" style="font-size: 0.95rem; font-weight: 700; color: var(--cartola-orange);"></select>
+          </div>
+
+          <!-- Header Visual do Confronto Selecionado -->
+          <div style="display: flex; align-items: center; justify-content: space-around; background: linear-gradient(135deg, #101622, #182232); border: 1px solid rgba(255,98,0,0.25); border-radius: var(--radius-md); padding: 16px; margin: 16px 0;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <img src="" id="h2h-crest-home" style="width: 50px; height: 50px; object-fit: contain;">
+              <div>
+                <h3 id="h2h-name-home" style="font-size: 1.15rem; font-weight: 800; color: #fff;">Casa</h3>
+                <span class="pill-count" style="background: rgba(16,185,129,0.15); color: #10b981; font-size: 0.72rem;">Mandante</span>
+              </div>
+            </div>
+
+            <div style="text-align: center;">
+              <div style="font-family: 'Teko', sans-serif; font-size: 2rem; color: var(--cartola-orange); font-weight: 700; line-height: 1;">VS</div>
+              <div id="h2h-match-info-text" style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">Brasileirão Betano</div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <div style="text-align: right;">
+                <h3 id="h2h-name-away" style="font-size: 1.15rem; font-weight: 800; color: #fff;">Visitante</h3>
+                <span class="pill-count" style="background: rgba(59,130,246,0.15); color: #60a5fa; font-size: 0.72rem;">Visitante</span>
+              </div>
+              <img src="" id="h2h-crest-away" style="width: 50px; height: 50px; object-fit: contain;">
+            </div>
+          </div>
+
+          <!-- Seção de Upload de Imagem 500x500 (JPG, PNG, PDF) -->
+          <div style="background: rgba(0,0,0,0.25); border: 1px dashed rgba(255,255,255,0.18); border-radius: var(--radius-md); padding: 16px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;">
+              <div>
+                <h4 style="font-size: 0.95rem; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 6px;">
+                  <i data-feather="image"></i> Imagem Personalizada do Confronto (Formato 500x500)
+                </h4>
+                <p style="font-size: 0.76rem; color: var(--text-muted);">Envie uma imagem quadrada em JPG, PNG ou PDF para substituir ou enriquecer o card deste confronto.</p>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <label class="nav-btn nav-btn-primary" style="cursor: pointer; font-size: 0.8rem;">
+                  <i data-feather="upload"></i> Escolher Imagem 500x500 (JPG/PNG/PDF)
+                  <input type="file" id="h2h-image-file" accept="image/png, image/jpeg, image/jpg, application/pdf" style="display: none;" onchange="uploadH2HImage(this)">
+                </label>
+                <button class="nav-btn" id="btn-remove-h2h-img" onclick="removeH2HImage()" style="display: none; color: #ef4444; border-color: rgba(239,68,68,0.3); font-size: 0.8rem;">
+                  <i data-feather="trash-2"></i> Remover
+                </button>
+              </div>
+            </div>
+
+            <div id="h2h-image-preview-box" style="display: none; text-align: center; padding: 10px; background: #080c12; border-radius: 8px;">
+              <img id="h2h-image-preview-img" src="" style="max-width: 250px; max-height: 250px; aspect-ratio: 1/1; object-fit: cover; border-radius: 8px; border: 2px solid var(--cartola-orange);">
+              <div id="h2h-pdf-preview-text" style="display: none; color: #60a5fa; font-weight: 700; font-size: 0.85rem; padding: 10px;">
+                <i data-feather="file-text" style="vertical-align: middle;"></i> Documento PDF Vinculado ao Confronto
+              </div>
+            </div>
+          </div>
+
+          <!-- Duas Colunas: Confrontos Diretos (Esquerda) vs Últimos Jogos (Direita) -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;" class="h2h-admin-columns">
+            
+            <!-- Coluna 1: Confrontos Diretos (H2H Histórico) -->
+            <div style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius-md); padding: 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h3 style="font-size: 1rem; font-weight: 800; color: var(--cartola-orange); display: flex; align-items: center; gap: 6px;">
+                  <i data-feather="shield"></i> Confrontos Diretos (H2H)
+                </h3>
+                <button class="nav-btn" onclick="addNewH2HRow()" style="padding: 4px 10px; font-size: 0.75rem;">
+                  <i data-feather="plus"></i> Adicionar Jogo
+                </button>
+              </div>
+
+              <div id="h2h-direct-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 480px; overflow-y: auto;">
+                <!-- Itens injetados via JS -->
+              </div>
+            </div>
+
+            <!-- Coluna 2: Partidas / Últimos 5 Jogos dos Times -->
+            <div style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius-md); padding: 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+                <div style="display: flex; gap: 4px;">
+                  <button id="btn-h2h-team-home" class="nav-btn nav-btn-primary" onclick="switchH2HRecentTeam('home')" style="font-size: 0.78rem; padding: 6px 12px;">
+                    <span id="label-h2h-team-home">Mandante</span>
+                  </button>
+                  <button id="btn-h2h-team-away" class="nav-btn" onclick="switchH2HRecentTeam('away')" style="font-size: 0.78rem; padding: 6px 12px;">
+                    <span id="label-h2h-team-away">Visitante</span>
+                  </button>
+                </div>
+                <button class="nav-btn" onclick="addNewRecentGameRow()" style="padding: 4px 10px; font-size: 0.75rem;">
+                  <i data-feather="plus"></i> Adicionar Partida
+                </button>
+              </div>
+
+              <div id="h2h-recent-games-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 480px; overflow-y: auto;">
+                <!-- Itens injetados via JS -->
+              </div>
+            </div>
+
+          </div>
+
+          <div style="margin-top: 20px; text-align: right;">
+            <button class="nav-btn nav-btn-primary" onclick="saveCurrentH2HData()" style="padding: 12px 24px; font-size: 0.9rem; font-weight: 800;">
+              <i data-feather="save"></i> Salvar Todas as Informações do Confronto
+            </button>
+          </div>
+        </div>
+
+        <!-- Tab: Tabela de Classificação -->
+        <div id="tab-standings" class="side-card" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 14px;">
+            <div>
+              <h2 style="font-size: 1.3rem; font-weight: 900; color: #fff; display: flex; align-items: center; gap: 8px;">
+                <i data-feather="bar-chart-2" style="color: var(--cartola-orange);"></i> Tabela de Classificação do Brasileirão 2026
+              </h2>
+              <p style="color: var(--text-muted); font-size: 0.82rem;">Os resultados inseridos nas partidas recalculam automaticamente as posições, pontos, saldo e histórico idêntico ao Sofascore.</p>
+            </div>
+            
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button class="nav-btn" onclick="recalculateStandingsAuto()" style="background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid #3b82f6; font-weight: 800; padding: 10px 16px;" title="Recalcular toda a tabela a partir dos placares registrados das partidas">
+                <i data-feather="refresh-cw"></i> Recalcular das Partidas
+              </button>
+              <button class="nav-btn nav-btn-primary" onclick="saveAdminStandings()" style="font-weight: 800; padding: 10px 18px;">
+                <i data-feather="save"></i> Salvar Classificação
+              </button>
+            </div>
+          </div>
+
+          <!-- Lançador Rápido de Placares das 10 Partidas da Rodada -->
+          <div style="background: #090d14; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 14px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <span style="font-size: 0.88rem; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 6px;">
+                <i data-feather="zap" style="width: 15px; height: 15px; color: #f59e0b;"></i> Lançar Resultados da Rodada (Recálculo Instantâneo)
+              </span>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">Altere o placar e clique em Salvar Placar</span>
+            </div>
+            <div id="admin-standings-matches-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px;">
+              <!-- Injetado via JS -->
+            </div>
+          </div>
+
+          <div id="standings-save-alert" style="display: none; padding: 10px 14px; border-radius: var(--radius-sm); margin-bottom: 14px; font-size: 0.85rem; font-weight: 700; background: rgba(16,185,129,0.15); border: 1px solid #10b981; color: #10b981;">
+            <i data-feather="check-circle" style="width: 16px; height: 16px; vertical-align: middle;"></i> Tabela de Classificação salva com sucesso!
+          </div>
+
+          <div style="overflow-x: auto; max-height: 720px;">
+            <table class="player-table">
+              <thead>
+                <tr>
+                  <th style="width: 45px; text-align: center;">Pos</th>
+                  <th>Clube</th>
+                  <th style="width: 50px; text-align: center;" title="Jogos">P</th>
+                  <th style="width: 50px; text-align: center;" title="Vitórias">W</th>
+                  <th style="width: 50px; text-align: center;" title="Empates">D</th>
+                  <th style="width: 50px; text-align: center;" title="Derrotas">L</th>
+                  <th style="width: 55px; text-align: center;" title="Gols Pró">GP</th>
+                  <th style="width: 55px; text-align: center;" title="Gols Contra">GC</th>
+                  <th style="width: 55px; text-align: center;" title="Saldo de Gols">SG</th>
+                  <th style="width: 140px; text-align: center;" title="Últimos 5 (ex: W,D,L,W,W)">Últimos 5</th>
+                  <th style="width: 60px; text-align: center; color: var(--cartola-orange);" title="Pontos">PTS</th>
+                </tr>
+              </thead>
+              <tbody id="admin-standings-tbody">
+                <!-- Injetado dinamicamente via JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <div style="margin-top: 16px; text-align: right;">
+            <button class="nav-btn nav-btn-primary" onclick="saveAdminStandings()" style="padding: 10px 20px; font-weight: 800;">
+              <i data-feather="save"></i> Salvar Alterações da Tabela
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  <script>
+    let currentUser = null;
+    let allClubs = [], allAthletes = [], allPositions = {}, allStatus = {}, allTactics = {}, allMatches = [];
+    let currentRound = 23;
+    let selectedClubId = null;
+    let savedPositions = {};
+    let currentFotoMode = 'local';
+    let pendingChanges = {};
+
+    // ---------- Auth ----------
+    async function checkAuth() {
+      const session = localStorage.getItem('cartola_session');
+      if (session) {
+        try {
+          currentUser = JSON.parse(session);
+          if (currentUser.role === 'admin') {
+            document.getElementById('login-overlay').style.display = 'none';
+            document.getElementById('active-user-name').textContent = currentUser.username + ' (ADMIN)';
+            await loadData();
+            feather.replace();
+            return;
+          }
+        } catch(e) {}
+      }
+      document.getElementById('login-overlay').style.display = 'flex';
+      feather.replace();
+    }
+
+    async function handleLogin() {
+      const u = document.getElementById('login-user').value.trim();
+      const p = document.getElementById('login-pass').value.trim();
+      const err = document.getElementById('login-error-msg');
+      err.style.display = 'none';
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: u, password: p })
+        });
+        const data = await res.json();
+        if (data.sucesso && data.role === 'admin') {
+          localStorage.setItem('cartola_session', JSON.stringify({ username: data.username, role: data.role, token: data.token }));
+          location.reload();
+        } else {
+          err.textContent = data.mensagem || data.error || 'Acesso restrito ao administrador.';
+          err.style.display = 'block';
+        }
+      } catch(e) {
+        err.textContent = 'Erro: ' + e.message; err.style.display = 'block';
+      }
+    }
+
+    function handleLogout() { localStorage.removeItem('cartola_session'); window.location.href = '/'; }
+
+    // ---------- Data ----------
+    async function loadData() {
+      const [clubsRes, athletesRes, statusRes, posRes, tacticsRes, coordsRes, configRes, matchesRes, mercadoRes] = await Promise.all([
+        fetch('/api/clubes').then(r => r.json()).catch(() => []),
+        fetch('/api/atletas/mercado').then(r => r.json()).catch(() => ({ atletas: [] })),
+        fetch('/api/status').then(r => r.json()).catch(() => ({})),
+        fetch('/api/posicoes').then(r => r.json()).catch(() => ({})),
+        fetch('/api/taticas').then(r => r.json()).catch(() => ({})),
+        fetch('/api/pitch/positions').then(r => r.json()).catch(() => ({})),
+        fetch('/api/config').then(r => r.json()).catch(() => ({ foto_mode: 'local' })),
+        fetch('/api/partidas').then(r => r.json()).catch(() => ({ partidas: [] })),
+        fetch('/api/mercado/status').then(r => r.json()).catch(() => ({ rodada_atual: 23 }))
+      ]);
+      allClubs = clubsRes || [];
+      allAthletes = athletesRes.atletas || [];
+      allStatus = statusRes || {};
+      allPositions = posRes || {};
+      allTactics = tacticsRes || {};
+      savedPositions = coordsRes || {};
+      allMatches = matchesRes.partidas || [];
+      currentRound = mercadoRes.rodada_atual || 23;
+      
+      if (configRes && configRes.foto_mode) {
+        currentFotoMode = configRes.foto_mode;
+        const selMode = document.getElementById('global-foto-mode-select');
+        if (selMode) selMode.value = currentFotoMode;
+      }
+
+      const sel = document.getElementById('admin-club-select');
+      sel.innerHTML = allClubs.map(c => `<option value="${c.id}">${c.nome} (${c.abreviacao})</option>`).join('');
+      if (allClubs.length > 0) { selectedClubId = allClubs[0].id; sel.value = selectedClubId; }
+      onClubSelectChange();
+    }
+
+    async function updateFotoMode(mode) {
+      currentFotoMode = mode;
+      try {
+        const res = await fetch('/api/admin/config', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ foto_mode: mode })
+        });
+        const data = await res.json();
+        if (data.sucesso) {
+          // Atualizar fotos em memória
+          allAthletes.forEach(a => {
+            if (mode === 'local' && a.foto_local) a.foto = a.foto_local;
+            else if (mode === 'cartola' && a.foto_cartola) a.foto = a.foto_cartola;
+          });
+          const st = document.getElementById('foto-mode-status');
+          st.textContent = 'Modo salvo: ' + (mode === 'local' ? 'Fotos Nossas' : 'API Cartola');
+          st.style.display = 'inline';
+          setTimeout(() => { st.style.display = 'none'; }, 3000);
+          
+          renderSquadTable();
+          renderDragPitch(selectedClubId, allTactics[String(selectedClubId)] || '4-3-3');
+        }
+      } catch(e) {
+        alert('Erro ao atualizar modo de foto: ' + e.message);
+      }
+    }
+
+    function onClubSelectChange() {
+      selectedClubId = parseInt(document.getElementById('admin-club-select').value);
+      const club = allClubs.find(c => c.id === selectedClubId) || {};
+      document.getElementById('selected-club-name').textContent = club.nome || '—';
+      document.getElementById('selected-club-crest').src = club.escudo || '';
+      const formation = allTactics[String(selectedClubId)] || '4-3-3';
+      document.getElementById('admin-formation-select').value = formation;
+      renderDragPitch(selectedClubId, formation);
+      renderSquadTable();
+    }
+
+    // ---------- Tabs ----------
+    function switchTab(tab) {
+      document.getElementById('tab-pitch').style.display = tab === 'pitch' ? '' : 'none';
+      document.getElementById('tab-table').style.display = tab === 'table' ? '' : 'none';
+      document.getElementById('tab-h2h').style.display = tab === 'h2h' ? '' : 'none';
+      document.getElementById('tab-standings').style.display = tab === 'standings' ? '' : 'none';
+      document.getElementById('tab-pitch-btn').className = 'nav-btn' + (tab === 'pitch' ? ' nav-btn-primary' : '');
+      document.getElementById('tab-table-btn').className = 'nav-btn' + (tab === 'table' ? ' nav-btn-primary' : '');
+      document.getElementById('tab-h2h-btn').className = 'nav-btn' + (tab === 'h2h' ? ' nav-btn-primary' : '');
+      document.getElementById('tab-standings-btn').className = 'nav-btn' + (tab === 'standings' ? ' nav-btn-primary' : '');
+      if (tab === 'h2h') initH2HTab();
+      if (tab === 'standings') loadAdminStandings();
+      feather.replace();
+    }
+
+    // ---------- Draggable Pitch ----------
+    function renderDragPitch(clubId, tatica) {
+      const wrapper = document.getElementById('drag-pitch-inner');
+      const squad = allAthletes.filter(a => a.clube_id === clubId);
+
+      // Default positions
+      const rows = generateFormationRows(tatica, squad);
+      const existingCoords = savedPositions[String(clubId)] || {};
+
+      // Remove existing draggable players
+      wrapper.querySelectorAll('.draggable-player').forEach(el => el.remove());
+
+      rows.forEach(({ player, defaultX, defaultY }) => {
+        const coords = existingCoords[String(player.atleta_id)];
+        const px = coords ? coords.x : defaultX;
+        const py = coords ? coords.y : defaultY;
+
+        const isDuvida = player.status_id === 2;
+        const el = document.createElement('div');
+        el.className = `draggable-player status-${player.status_id} ${isDuvida ? 'player-duvida-active' : ''}`;
+        el.style.left = (px * 100) + '%';
+        el.style.top = (py * 100) + '%';
+        el.dataset.atletaId = player.atleta_id;
+
+        const photo = (currentFotoMode === 'local' && player.foto_local) ? player.foto_local : (player.foto || player.foto_cartola);
+
+        el.innerHTML = `
+          <div class="dp-status-dot"></div>
+          <img src="${photo}" alt="${player.apelido}"
+            style="${isDuvida ? 'border: 2px solid #fbbf24; box-shadow: 0 0 14px rgba(251,191,36,0.9);' : ''}"
+            onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=${player.atleta_id}'">
+          <div class="dp-name" style="${isDuvida ? 'background: #b45309; color: #fff;' : ''}">${isDuvida ? '⚠️ ' : ''}${player.apelido}</div>
+        `;
+
+        // Drag events (mouse + touch)
+        el.addEventListener('mousedown', startDrag);
+        el.addEventListener('touchstart', startDragTouch, { passive: false });
+
+        wrapper.appendChild(el);
+      });
+
+      feather.replace();
+    }
+
+    function generateFormationRows(tatica, squad) {
+      const parts = tatica.split('-').map(Number);
+      const [d, m, a] = parts;
+      let numZags = 2, numLats = 2;
+      if (d === 3) { numZags = 3; numLats = 0; }
+      else if (d === 4) { numZags = 2; numLats = 2; }
+      else if (d === 5) { numZags = 3; numLats = 2; }
+
+      const getPosList = (posId, count) => {
+        // Prioriza Prováveis (7) e Dúvidas (2) definidos pelo admin
+        let list = squad.filter(p => p.posicao_id === posId && (p.status_id === 7 || p.status_id === 2));
+        if (list.length < count) {
+          const others = squad.filter(p => p.posicao_id === posId && !list.find(x => x.atleta_id === p.atleta_id) && p.status_id !== 5 && p.status_id !== 3);
+          list = [...list, ...others];
+        }
+        if (list.length < count) {
+          const rest = squad.filter(p => p.posicao_id === posId && !list.find(x => x.atleta_id === p.atleta_id));
+          list = [...list, ...rest];
+        }
+        return list.slice(0, count);
+      };
+
+      const goleiros = getPosList(1, 1);
+      const laterais = numLats > 0 ? getPosList(2, numLats) : [];
+      const zagueiros = getPosList(3, numZags);
+      const meias = getPosList(4, m);
+      const atacantes = getPosList(5, a);
+
+      const positions = [];
+
+      const spreadRow = (players, yPercent) => {
+        const n = players.length;
+        players.forEach((p, i) => {
+          const xPercent = n === 1 ? 0.5 : 0.12 + (i / Math.max(1, n - 1)) * 0.76;
+          positions.push({ player: p, defaultX: xPercent, defaultY: yPercent });
+        });
+      };
+
+      spreadRow(atacantes, 0.12);
+      spreadRow(meias, 0.35);
+
+      // Defensive line
+      const defLine = numLats > 0 ? [laterais[0], ...zagueiros, laterais[1]].filter(Boolean) : zagueiros;
+      spreadRow(defLine, 0.60);
+      spreadRow(goleiros, 0.88);
+
+      return positions;
+    }
+
+    // Mouse Drag
+    function startDrag(e) {
+      e.preventDefault();
+      const el = e.currentTarget;
+      const wrapper = document.getElementById('drag-pitch-wrapper');
+      const rect = wrapper.getBoundingClientRect();
+
+      function onMove(me) {
+        const x = ((me.clientX - rect.left) / rect.width);
+        const y = ((me.clientY - rect.top) / rect.height);
+        el.style.left = Math.max(0.02, Math.min(0.98, x)) * 100 + '%';
+        el.style.top = Math.max(0.02, Math.min(0.98, y)) * 100 + '%';
+      }
+      function onUp() {
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+      }
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+    }
+
+    // Touch Drag
+    function startDragTouch(e) {
+      e.preventDefault();
+      const el = e.currentTarget;
+      const wrapper = document.getElementById('drag-pitch-wrapper');
+      const rect = wrapper.getBoundingClientRect();
+
+      function onMove(te) {
+        const touch = te.touches[0];
+        const x = (touch.clientX - rect.left) / rect.width;
+        const y = (touch.clientY - rect.top) / rect.height;
+        el.style.left = Math.max(0.02, Math.min(0.98, x)) * 100 + '%';
+        el.style.top = Math.max(0.02, Math.min(0.98, y)) * 100 + '%';
+      }
+      function onEnd() {
+        document.removeEventListener('touchmove', onMove);
+        document.removeEventListener('touchend', onEnd);
+      }
+      document.addEventListener('touchmove', onMove, { passive: false });
+      document.addEventListener('touchend', onEnd);
+    }
+
+    async function savePitchPositions() {
+      const wrapper = document.getElementById('drag-pitch-inner');
+      const players = wrapper.querySelectorAll('.draggable-player');
+      const positions = {};
+
+      players.forEach(el => {
+        const aid = el.dataset.atletaId;
+        const x = parseFloat(el.style.left) / 100;
+        const y = parseFloat(el.style.top) / 100;
+        positions[aid] = { x, y };
+      });
+
+      try {
+        const res = await fetch('/api/admin/pitch/positions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ clube_id: selectedClubId, positions })
+        });
+        const data = await res.json();
+        if (data.sucesso) {
+          savedPositions[String(selectedClubId)] = positions;
+          alert('Posições do campinho salvas com sucesso!');
+        }
+      } catch(e) { alert('Erro: ' + e.message); }
+    }
+
+    // ---------- Formation Save ----------
+    async function updateClubFormation() {
+      const formation = document.getElementById('admin-formation-select').value;
+      try {
+        const res = await fetch('/api/admin/tatica', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ clube_id: selectedClubId, formacao: formation })
+        });
+        const data = await res.json();
+        if (data.sucesso) {
+          allTactics[String(selectedClubId)] = formation;
+          renderDragPitch(selectedClubId, formation);
+          alert('Formação ' + formation + ' salva!');
+        }
+      } catch(e) { alert('Erro: ' + e.message); }
+    }
+
+    // ---------- Crest Management ----------
+    async function resetOfficialCrest() {
+      const club = allClubs.find(c => c.id === selectedClubId);
+      if (!club) return;
+      const url = club.escudo_oficial || club.escudo;
+      await saveClubCrestUrl(url);
+    }
+
+    function uploadCustomCrest(input) {
+      if (!input.files || !input.files.length) return;
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const b64 = e.target.result;
+        const club = allClubs.find(c => c.id === selectedClubId) || {};
+        const uploadRes = await fetch('/api/admin/upload', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ folder: club.folder || 'Custom', subfolder: '.', filename: (club.abreviacao || 'crest') + '_custom.png', image_base64: b64 })
+        });
+        const uData = await uploadRes.json();
+        if (uData.url) await saveClubCrestUrl(uData.url);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function saveClubCrestUrl(url) {
+      const res = await fetch('/api/admin/clube/escudo', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ clube_id: selectedClubId, escudo_url: url })
+      });
+      const data = await res.json();
+      if (data.sucesso) {
+        const club = allClubs.find(c => c.id === selectedClubId);
+        if (club) club.escudo = url;
+        document.getElementById('selected-club-crest').src = url;
+        alert('Escudo atualizado!');
+      }
+    }
+
+    // ---------- Squad Table with Filter & Batch Save ----------
+    function renderSquadTable() {
+      const club = allClubs.find(c => c.id === selectedClubId) || allClubs[0] || {};
+      document.getElementById('squad-table-title').textContent = 'Elenco: ' + (club.nome || '');
+      const squad = allAthletes.filter(a => a.clube_id === selectedClubId);
+      document.getElementById('squad-total-count').textContent = squad.length + ' Atletas Cadastrados';
+
+      const posFilter = document.getElementById('table-pos-filter') ? document.getElementById('table-pos-filter').value : 'all';
+      const searchFilter = document.getElementById('table-search') ? document.getElementById('table-search').value.toLowerCase().trim() : '';
+
+      const filteredSquad = squad.filter(a => {
+        if (posFilter !== 'all' && String(a.posicao_id) !== String(posFilter)) return false;
+        if (searchFilter && !a.apelido.toLowerCase().includes(searchFilter) && !a.nome.toLowerCase().includes(searchFilter)) return false;
+        return true;
+      });
+
+      const statusColors = { 7: '#10b981', 2: '#fbbf24', 5: '#ef4444', 3: '#dc2626', 6: '#64748b' };
+      const tbody = document.getElementById('admin-table-body');
+
+      if (filteredSquad.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 24px;">Nenhum atleta encontrado com os filtros atuais.</td></tr>`;
+        feather.replace();
+        return;
+      }
+
+      tbody.innerHTML = filteredSquad.map(a => {
+        const posName = allPositions[a.posicao_id]?.nome || 'Atleta';
+        const sc = statusColors[a.status_id] || '#64748b';
+        const photo = (currentFotoMode === 'local' && a.foto_local) ? a.foto_local : (a.foto || a.foto_cartola);
+
+        return `<tr data-atleta-id="${a.atleta_id}">
+          <td>
+            <div style="position: relative; width: 38px; height: 38px;">
+              <img src="${photo}" style="width:38px;height:38px;border-radius:50%;object-fit:cover;background:#0d121a;border: 1.5px solid ${sc};" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=${a.atleta_id}'">
+              ${a.status_id === 2 ? '<span style="position:absolute;top:-2px;right:-2px;background:#fbbf24;color:#000;font-size:0.6rem;font-weight:900;border-radius:50%;width:14px;height:14px;display:flex;align-items:center;justify-content:center;">?</span>' : ''}
+            </div>
+          </td>
+          <td>
+            <strong style="color:#fff; font-size:0.9rem;">${a.apelido}</strong>
+            ${a.nome && a.nome !== a.apelido ? `<div style="font-size: 0.72rem; color: var(--text-muted);">${a.nome}</div>` : ''}
+          </td>
+          <td><span class="pill-count" style="font-size:0.75rem;">${posName}</span></td>
+          <td><span style="color:var(--cartola-orange);font-weight:700;">C$ ${Number(a.preco_num).toFixed(2)}</span></td>
+          <td>
+            <select id="status-select-${a.atleta_id}" onchange="onStatusSelectChange(${a.atleta_id}, this.value)" style="background:${sc}22;color:${sc};border:1px solid ${sc}77;border-radius:6px;padding:6px 10px;font-weight:700;outline:none;cursor:pointer; font-size:0.84rem;">
+              <option value="7" ${a.status_id===7?'selected':''}>✅ Provável</option>
+              <option value="2" ${a.status_id===2?'selected':''}>⚠️ Dúvida</option>
+              <option value="6" ${a.status_id===6?'selected':''}>⚪ Nulo / Banco</option>
+              <option value="5" ${a.status_id===5?'selected':''}>❌ Lesionado (DM)</option>
+              <option value="3" ${a.status_id===3?'selected':''}>🚫 Suspenso</option>
+            </select>
+          </td>
+          <td>
+            <button class="nav-btn" style="padding: 4px 10px; font-size: 0.75rem;" onclick="saveSinglePlayerStatus(${a.atleta_id})">
+              <i data-feather="check"></i> Salvar
+            </button>
+          </td>
+        </tr>`;
+      }).join('');
+
+      feather.replace();
+    }
+
+    function onStatusSelectChange(atletaId, newStatusId) {
+      pendingChanges[atletaId] = parseInt(newStatusId);
+      const a = allAthletes.find(x => x.atleta_id === atletaId);
+      if (a) a.status_id = parseInt(newStatusId);
+
+      const statusColors = { 7: '#10b981', 2: '#fbbf24', 5: '#ef4444', 3: '#dc2626', 6: '#64748b' };
+      const sel = document.getElementById(`status-select-${atletaId}`);
+      if (sel) {
+        const sc = statusColors[newStatusId] || '#64748b';
+        sel.style.background = sc + '22';
+        sel.style.color = sc;
+        sel.style.borderColor = sc + '77';
+      }
+
+      // Atualizar campinho
+      renderDragPitch(selectedClubId, allTactics[String(selectedClubId)] || '4-3-3');
+    }
+
+    async function saveSinglePlayerStatus(atletaId) {
+      const sel = document.getElementById(`status-select-${atletaId}`);
+      if (!sel) return;
+      const newStatusId = parseInt(sel.value);
+      
+      try {
+        const res = await fetch('/api/admin/atleta/status', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ atleta_id: atletaId, status_id: newStatusId })
+        });
+        const data = await res.json();
+        if (data.sucesso) {
+          const a = allAthletes.find(x => x.atleta_id === atletaId);
+          if (a) a.status_id = newStatusId;
+          delete pendingChanges[atletaId];
+          showSquadSaveAlert(`Status de ${a.apelido} salvo como ${allStatus[newStatusId]?.nome || 'Definido'}!`);
+          renderSquadTable();
+          renderDragPitch(selectedClubId, allTactics[String(selectedClubId)] || '4-3-3');
+        }
+      } catch(e) {
+        alert('Erro ao salvar status: ' + e.message);
+      }
+    }
+
+    async function saveAllSquadChanges() {
+      const selects = document.querySelectorAll('#admin-table-body select');
+      const alteracoes = [];
+
+      selects.forEach(sel => {
+        const aid = parseInt(sel.id.replace('status-select-', ''));
+        const st = parseInt(sel.value);
+        alteracoes.push({ atleta_id: aid, status_id: st });
+      });
+
+      if (alteracoes.length === 0) {
+        alert('Nenhum atleta listado para salvar.');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/admin/elenco/salvar-lote', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ alteracoes })
+        });
+        const data = await res.json();
+        if (data.sucesso) {
+          alteracoes.forEach(alt => {
+            const a = allAthletes.find(x => x.atleta_id === alt.atleta_id);
+            if (a) a.status_id = alt.status_id;
+          });
+          pendingChanges = {};
+          showSquadSaveAlert(`✅ ${data.atualizados} atletas do elenco foram salvos com sucesso no banco de dados!`);
+          renderSquadTable();
+          renderDragPitch(selectedClubId, allTactics[String(selectedClubId)] || '4-3-3');
+        } else {
+          alert('Erro ao salvar elenco: ' + (data.mensagem || data.error));
+        }
+      } catch(e) {
+        alert('Erro na requisição: ' + e.message);
+      }
+    }
+
+    function showSquadSaveAlert(msg) {
+      const alertBox = document.getElementById('squad-save-alert');
+      if (alertBox) {
+        alertBox.innerHTML = `<i data-feather="check-circle" style="width:16px;height:16px;vertical-align:middle;"></i> ${msg}`;
+        alertBox.style.display = 'block';
+        feather.replace();
+        setTimeout(() => { alertBox.style.display = 'none'; }, 4000);
+      }
+    }
+
+    // ---------- Save Player ----------
+    async function savePlayerForm() {
+      const name = document.getElementById('new-player-name').value.trim();
+      const pos = parseInt(document.getElementById('new-player-pos').value);
+      const status = parseInt(document.getElementById('new-player-status').value);
+      const price = parseFloat(document.getElementById('new-player-price').value) || 5.0;
+      const fileInput = document.getElementById('new-player-file');
+      if (!name) { alert('Informe o nome do jogador.'); return; }
+
+      let photoUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(name)}`;
+      if (fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        const b64 = await new Promise(resolve => {
+          const r = new FileReader(); r.onload = e => resolve(e.target.result); r.readAsDataURL(file);
+        });
+        const club = allClubs.find(c => c.id === selectedClubId) || {};
+        const upRes = await fetch('/api/admin/upload', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ folder: club.folder || 'Flamengo', subfolder: 'Atacantes', filename: file.name, image_base64: b64 })
+        });
+        const upData = await upRes.json();
+        if (upData.url) photoUrl = upData.url;
+      }
+
+      const res = await fetch('/api/admin/atleta/novo', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome: name, clube_id: selectedClubId, posicao_id: pos, status_id: status, preco_num: price, foto: photoUrl })
+      });
+      const data = await res.json();
+      if (data.sucesso) {
+        allAthletes.push(data.atleta);
+        renderSquadTable();
+        renderDragPitch(selectedClubId, allTactics[String(selectedClubId)] || '4-3-3');
+        document.getElementById('new-player-name').value = '';
+        document.getElementById('new-player-file').value = '';
+        alert('Jogador cadastrado com sucesso!');
+      }
+    }
+
+    async function syncOfficialCartola() {
+      const res = await fetch('/api/admin/sync-cartola', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+      const data = await res.json();
+      if (data.sucesso) { alert('Sincronização concluída! Calendário real sem repetições e fotos atualizadas.'); location.reload(); }
+      else alert('Falha: ' + (data.mensagem || JSON.stringify(data)));
+    }
+
+    function exportData() { window.open('/api/admin/export', '_blank'); }
+    
+    function filterTable() {
+      renderSquadTable();
+    }
+
+    // =========================================================================
+    // MÓDULO H2H - CONFRONTO DIRETO & ÚLTIMOS 5 JOGOS
+    // =========================================================================
+
+    let allH2HData = {};
+    let currentH2HPartidaId = null;
+    let currentH2HRecentTeam = 'home'; // 'home' ou 'away'
+
+    async function initH2HTab() {
+      // Carregar todos os dados H2H
+      try {
+        const res = await fetch('/api/confrontos-h2h');
+        allH2HData = await res.json();
+      } catch(e) {
+        allH2HData = {};
+      }
+      populateH2HMatchDropdown();
+    }
+
+    function populateH2HMatchDropdown() {
+      const sel = document.getElementById('h2h-match-select');
+      if (!sel) return;
+
+      sel.innerHTML = '';
+      allMatches.forEach(m => {
+        const casa = allClubs.find(c => c.id === m.clube_casa_id) || {};
+        const vis = allClubs.find(c => c.id === m.clube_visitante_id) || {};
+        const dt = (m.partida_data || '').substring(0, 10).split('-').reverse().join('/');
+        const opt = document.createElement('option');
+        opt.value = m.partida_id;
+        opt.textContent = `${dt} • ${casa.nome || 'Casa'} vs ${vis.nome || 'Visitante'}`;
+        sel.appendChild(opt);
+      });
+
+      if (allMatches.length > 0) {
+        currentH2HPartidaId = String(allMatches[0].partida_id);
+        onH2HMatchSelectChange();
+      }
+    }
+
+    function onH2HMatchSelectChange() {
+      const sel = document.getElementById('h2h-match-select');
+      if (!sel) return;
+      if (currentH2HPartidaId) {
+        // Salvar em memória o que o usuário preencheu no confronto anterior
+        const prevData = collectH2HFormData();
+        if (prevData) allH2HData[currentH2HPartidaId] = prevData;
+      }
+      currentH2HPartidaId = String(sel.value);
+      loadH2HForMatch(currentH2HPartidaId);
+    }
+
+    function loadH2HForMatch(partidaId) {
+      const partida = allMatches.find(m => String(m.partida_id) === String(partidaId));
+      if (!partida) return;
+
+      const casa = allClubs.find(c => c.id === partida.clube_casa_id) || { nome: 'Casa', escudo: '' };
+      const vis  = allClubs.find(c => c.id === partida.clube_visitante_id) || { nome: 'Visitante', escudo: '' };
+
+      // Atualizar header visual
+      document.getElementById('h2h-crest-home').src = casa.escudo || '';
+      document.getElementById('h2h-crest-away').src = vis.escudo || '';
+      document.getElementById('h2h-name-home').textContent = casa.nome;
+      document.getElementById('h2h-name-away').textContent = vis.nome;
+      document.getElementById('label-h2h-team-home').textContent = casa.nome;
+      document.getElementById('label-h2h-team-away').textContent = vis.nome;
+      document.getElementById('h2h-match-info-text').textContent = `Rodada ${currentRound || ''} • Brasileirão Betano`;
+
+      const h2hEntry = allH2HData[String(partidaId)] || {
+        partida_id: partida.partida_id,
+        clube_casa_id: partida.clube_casa_id,
+        clube_visitante_id: partida.clube_visitante_id,
+        imagem_custom_500x500: null,
+        confrontos_diretos: [],
+        ultimos_jogos_mandante: [],
+        ultimos_jogos_visitante: []
+      };
+      allH2HData[String(partidaId)] = h2hEntry;
+
+      // Preview de imagem personalizada
+      const previewBox = document.getElementById('h2h-image-preview-box');
+      const previewImg = document.getElementById('h2h-image-preview-img');
+      const pdfText    = document.getElementById('h2h-pdf-preview-text');
+      const removeBtn  = document.getElementById('btn-remove-h2h-img');
+
+      if (h2hEntry.imagem_custom_500x500) {
+        const url = h2hEntry.imagem_custom_500x500;
+        previewBox.style.display = 'block';
+        removeBtn.style.display = 'inline-flex';
+        if (url.endsWith('.pdf')) {
+          previewImg.style.display = 'none';
+          pdfText.style.display = 'block';
+        } else {
+          previewImg.src = url;
+          previewImg.style.display = 'block';
+          pdfText.style.display = 'none';
+        }
+      } else {
+        previewBox.style.display = 'none';
+        removeBtn.style.display = 'none';
+      }
+
+      renderH2HDirectList(h2hEntry.confrontos_diretos || [], casa, vis);
+      renderH2HRecentList(h2hEntry, currentH2HRecentTeam, casa, vis);
+      feather.replace();
+    }
+
+    // ── Render Confrontos Diretos (Histórico H2H) ──────────────────────────────
+    function renderH2HDirectList(jogos, casaClub, visClub) {
+      const container = document.getElementById('h2h-direct-list');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (jogos.length === 0) {
+        container.innerHTML = `<div style="color: var(--text-muted); font-size: 0.82rem; text-align: center; padding: 20px;">Nenhum confronto histórico cadastrado.<br>Clique em "+ Adicionar Jogo" para começar.</div>`;
+        return;
+      }
+
+      jogos.forEach((jogo, idx) => renderH2HDirectRow(jogo, idx, container, casaClub, visClub));
+    }
+
+    function renderH2HDirectRow(jogo, idx, container, casaClub, visClub) {
+      const statusOpts = ['AGENDADO','FT','AO VIVO','Intervalo','Cancelado','Adiado'];
+      const isPlayed = jogo.hora_status === 'FT' || jogo.placar_casa !== null;
+
+      const row = document.createElement('div');
+      row.className = 'h2h-edit-row';
+      row.style.cssText = 'background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px;';
+      row.dataset.idx = idx;
+
+      row.innerHTML = `
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
+          <div style="display: flex; align-items: center; gap: 6px; flex: 1;">
+            <input type="text" class="form-input h2h-row-data" data-field="data" value="${jogo.data || ''}" placeholder="DD/MM/AA" style="width: 80px; font-size: 0.78rem; padding: 5px 8px;" title="Data do jogo">
+            <select class="form-select h2h-row-data" data-field="hora_status" style="width: 90px; font-size: 0.78rem; padding: 5px;">
+              ${statusOpts.map(s => `<option value="${s}" ${jogo.hora_status === s ? 'selected' : ''}>${s}</option>`).join('')}
+              <option value="${!statusOpts.includes(jogo.hora_status) ? (jogo.hora_status || '') : ''}" ${!statusOpts.includes(jogo.hora_status) ? 'selected' : ''} style="display:${!statusOpts.includes(jogo.hora_status)?'block':'none'}">
+                ${!statusOpts.includes(jogo.hora_status) ? (jogo.hora_status || '') : ''}
+              </option>
+            </select>
+            <input type="text" class="form-input h2h-row-data" data-field="hora_status_custom" placeholder="ou hora ex: 16:00" value="${(!statusOpts.includes(jogo.hora_status) && jogo.hora_status !== 'FT') ? (jogo.hora_status || '') : ''}" style="width: 90px; font-size: 0.78rem; padding: 5px 8px;" title="Hora personalizada">
+          </div>
+          <div style="display: flex; gap: 4px;">
+            <label style="display: flex; align-items: center; gap: 4px; font-size: 0.74rem; color: var(--text-muted); cursor: pointer;">
+              <input type="checkbox" class="h2h-row-data" data-field="is_brasileirao" ${jogo.is_brasileirao ? 'checked' : ''}> Brasileirão
+            </label>
+            <button onclick="removeH2HDirectRow(${idx})" style="background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #ef4444; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 0.75rem;">
+              <i data-feather="trash-2" style="width: 12px; height: 12px;"></i>
+            </button>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+          <div style="flex: 1; min-width: 100px;">
+            <label style="font-size: 0.72rem; color: var(--text-muted);">Time Mandante</label>
+            <input type="text" class="form-input h2h-row-data" data-field="clube_casa_nome" value="${jogo.clube_casa_nome || ''}" placeholder="Nome do time" style="font-size: 0.82rem; padding: 6px 8px; font-weight: 700;">
+            <input type="text" class="form-input h2h-row-data" data-field="clube_casa_escudo" value="${jogo.clube_casa_escudo || ''}" placeholder="URL do escudo" style="font-size: 0.72rem; padding: 4px 8px; margin-top: 3px;">
+          </div>
+          <div style="text-align: center; min-width: 70px;">
+            <label style="font-size: 0.72rem; color: var(--text-muted);">Placar</label>
+            <div style="display: flex; align-items: center; gap: 4px; justify-content: center;">
+              <input type="number" class="form-input h2h-row-data" data-field="placar_casa" value="${jogo.placar_casa !== null && jogo.placar_casa !== undefined ? jogo.placar_casa : ''}" placeholder="-" style="width: 42px; font-size: 1rem; font-weight: 900; text-align: center; padding: 6px 4px;" min="0">
+              <span style="color: var(--text-muted); font-weight: 800;">×</span>
+              <input type="number" class="form-input h2h-row-data" data-field="placar_visitante" value="${jogo.placar_visitante !== null && jogo.placar_visitante !== undefined ? jogo.placar_visitante : ''}" placeholder="-" style="width: 42px; font-size: 1rem; font-weight: 900; text-align: center; padding: 6px 4px;" min="0">
+            </div>
+          </div>
+          <div style="flex: 1; min-width: 100px; text-align: right;">
+            <label style="font-size: 0.72rem; color: var(--text-muted);">Time Visitante</label>
+            <input type="text" class="form-input h2h-row-data" data-field="clube_visitante_nome" value="${jogo.clube_visitante_nome || ''}" placeholder="Nome do time" style="font-size: 0.82rem; padding: 6px 8px; font-weight: 700;">
+            <input type="text" class="form-input h2h-row-data" data-field="clube_visitante_escudo" value="${jogo.clube_visitante_escudo || ''}" placeholder="URL do escudo" style="font-size: 0.72rem; padding: 4px 8px; margin-top: 3px;">
+          </div>
+        </div>
+
+        <div>
+          <input type="text" class="form-input h2h-row-data" data-field="competicao" value="${jogo.competicao || 'Brasileirão Betano'}" placeholder="Competição" style="font-size: 0.78rem; padding: 5px 8px; width: 100%;">
+        </div>
+      `;
+
+      container.appendChild(row);
+    }
+
+    function syncH2HDirectDOMToMemory() {
+      if (!currentH2HPartidaId) return;
+      const h2h = allH2HData[currentH2HPartidaId] || { confrontos_diretos: [] };
+      const directRows = document.querySelectorAll('#h2h-direct-list .h2h-edit-row');
+      const confrontos = [];
+      directRows.forEach((row, idx) => {
+        const fields = {};
+        row.querySelectorAll('.h2h-row-data').forEach(inp => {
+          const field = inp.dataset.field;
+          if (!field) return;
+          if (inp.type === 'checkbox') { fields[field] = inp.checked; }
+          else if (inp.type === 'number') { fields[field] = inp.value !== '' ? Number(inp.value) : null; }
+          else { fields[field] = inp.value.trim(); }
+        });
+        if (fields.hora_status_custom) { fields.hora_status = fields.hora_status_custom; }
+        delete fields.hora_status_custom;
+        const orig = (h2h.confrontos_diretos || [])[idx];
+        fields.id = orig?.id || `h2h-${currentH2HPartidaId}-${idx}`;
+        confrontos.push(fields);
+      });
+      h2h.confrontos_diretos = confrontos;
+      allH2HData[currentH2HPartidaId] = h2h;
+    }
+
+    function addNewH2HRow() {
+      syncH2HDirectDOMToMemory();
+      const partida = allMatches.find(m => String(m.partida_id) === String(currentH2HPartidaId));
+      const h2h = allH2HData[currentH2HPartidaId] || { confrontos_diretos: [] };
+      const casa = allClubs.find(c => c.id === (partida?.clube_casa_id)) || {};
+      const vis = allClubs.find(c => c.id === (partida?.clube_visitante_id)) || {};
+
+      const novoJogo = {
+        id: `h2h-new-${Date.now()}`,
+        data: '',
+        hora_status: 'FT',
+        competicao: 'Brasileirão Betano',
+        clube_casa_nome: casa.nome || '',
+        clube_casa_escudo: casa.escudo || '',
+        clube_visitante_nome: vis.nome || '',
+        clube_visitante_escudo: vis.escudo || '',
+        placar_casa: null,
+        placar_visitante: null,
+        is_brasileirao: true
+      };
+
+      if (!h2h.confrontos_diretos) h2h.confrontos_diretos = [];
+      h2h.confrontos_diretos.push(novoJogo);
+      allH2HData[currentH2HPartidaId] = h2h;
+
+      const container = document.getElementById('h2h-direct-list');
+      const idx = h2h.confrontos_diretos.length - 1;
+      renderH2HDirectRow(novoJogo, idx, container, casa, vis);
+      feather.replace();
+    }
+
+    function removeH2HDirectRow(idx) {
+      syncH2HDirectDOMToMemory();
+      const h2h = allH2HData[currentH2HPartidaId];
+      if (h2h && h2h.confrontos_diretos) {
+        h2h.confrontos_diretos.splice(idx, 1);
+        allH2HData[currentH2HPartidaId] = h2h;
+      }
+      const partida = allMatches.find(m => String(m.partida_id) === String(currentH2HPartidaId));
+      const casa = allClubs.find(c => c.id === partida?.clube_casa_id) || {};
+      const vis = allClubs.find(c => c.id === partida?.clube_visitante_id) || {};
+      renderH2HDirectList(h2h?.confrontos_diretos || [], casa, vis);
+      feather.replace();
+    }
+
+    // ── Render Últimos Jogos (dos times) ────────────────────────────────────────
+    function syncRecentTeamDOMToMemory(team) {
+      if (!currentH2HPartidaId) return;
+      const key = team === 'home' ? 'ultimos_jogos_mandante' : 'ultimos_jogos_visitante';
+      const allRecentInputs = document.querySelectorAll(`.h2h-recent-data[data-team="${team}"]`);
+      if (allRecentInputs.length === 0) return;
+
+      const h2h = allH2HData[currentH2HPartidaId] || {};
+      const jogosMap = {};
+      allRecentInputs.forEach(inp => {
+        const idx = inp.dataset.idx;
+        const field = inp.dataset.field;
+        if (!jogosMap[idx]) jogosMap[idx] = {};
+        if (inp.type === 'number') { jogosMap[idx][field] = inp.value !== '' ? Number(inp.value) : null; }
+        else { jogosMap[idx][field] = inp.value.trim(); }
+      });
+
+      const jogos = Object.keys(jogosMap).sort((a,b) => Number(a)-Number(b)).map((idx, i) => {
+        const orig = (h2h[key] || [])[i];
+        return { id: orig?.id || `uj-${team}-${currentH2HPartidaId}-${i}`, ...jogosMap[idx] };
+      });
+
+      h2h[key] = jogos;
+      allH2HData[currentH2HPartidaId] = h2h;
+    }
+
+    function switchH2HRecentTeam(team) {
+      syncRecentTeamDOMToMemory(currentH2HRecentTeam);
+      currentH2HRecentTeam = team;
+      document.getElementById('btn-h2h-team-home').className = 'nav-btn' + (team === 'home' ? ' nav-btn-primary' : '');
+      document.getElementById('btn-h2h-team-away').className = 'nav-btn' + (team === 'away' ? ' nav-btn-primary' : '');
+
+      const partida = allMatches.find(m => String(m.partida_id) === String(currentH2HPartidaId));
+      const casa = allClubs.find(c => c.id === partida?.clube_casa_id) || {};
+      const vis  = allClubs.find(c => c.id === partida?.clube_visitante_id) || {};
+      const h2h  = allH2HData[currentH2HPartidaId] || {};
+      renderH2HRecentList(h2h, team, casa, vis);
+      feather.replace();
+    }
+
+    function renderH2HRecentList(h2h, team, casaClub, visClub) {
+      const container = document.getElementById('h2h-recent-games-list');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const jogos = team === 'home'
+        ? (h2h.ultimos_jogos_mandante || [])
+        : (h2h.ultimos_jogos_visitante || []);
+
+      if (jogos.length === 0) {
+        container.innerHTML = `<div style="color: var(--text-muted); font-size: 0.82rem; text-align: center; padding: 20px;">Nenhum jogo cadastrado para ${team === 'home' ? casaClub.nome || 'Mandante' : visClub.nome || 'Visitante'}.<br>Clique em "+ Adicionar Partida".</div>`;
+        return;
+      }
+
+      jogos.forEach((jogo, idx) => renderH2HRecentRow(jogo, idx, container, team, casaClub, visClub));
+    }
+
+    function renderH2HRecentRow(jogo, idx, container, team, casaClub, visClub) {
+      const resultOptions = [
+        { v: 'W', label: 'V (Vitória)', color: '#10b981' },
+        { v: 'D', label: 'E (Empate)', color: '#6b7280' },
+        { v: 'L', label: 'D (Derrota)', color: '#ef4444' },
+        { v: null, label: '— (Agendado)', color: 'var(--text-muted)' }
+      ];
+
+      const row = document.createElement('div');
+      row.style.cssText = 'background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 7px;';
+      row.dataset.idx = idx;
+      row.dataset.team = team;
+
+      const res = jogo.resultado;
+      const resBgColor = res === 'W' ? 'rgba(16,185,129,0.2)' : res === 'D' ? 'rgba(107,114,128,0.2)' : res === 'L' ? 'rgba(239,68,68,0.2)' : 'transparent';
+
+      row.innerHTML = `
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px; flex-wrap: wrap;">
+          <div style="display: flex; gap: 6px; align-items: center;">
+            <input type="text" class="form-input h2h-recent-data" data-field="data" data-idx="${idx}" data-team="${team}" value="${jogo.data || ''}" placeholder="DD/MM/AA" style="width: 80px; font-size: 0.78rem; padding: 5px 8px;">
+            <input type="text" class="form-input h2h-recent-data" data-field="hora_status" data-idx="${idx}" data-team="${team}" value="${jogo.hora_status || 'FT'}" placeholder="FT / 16:00" style="width: 70px; font-size: 0.78rem; padding: 5px 8px;">
+          </div>
+          <div style="display: flex; gap: 6px; align-items: center;">
+            <select class="form-select h2h-recent-data" data-field="resultado" data-idx="${idx}" data-team="${team}" style="padding: 4px 8px; font-size: 0.78rem; background: ${resBgColor};">
+              ${resultOptions.map(r => `<option value="${r.v || ''}" ${res === r.v ? 'selected' : ''} style="color:${r.color}; background: #0d1520;">${r.label}</option>`).join('')}
+            </select>
+            <button onclick="removeH2HRecentRow(${idx}, '${team}')" style="background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #ef4444; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 0.75rem;">
+              <i data-feather="trash-2" style="width: 12px; height: 12px;"></i>
+            </button>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+          <div style="flex: 1; min-width: 90px;">
+            <input type="text" class="form-input h2h-recent-data" data-field="clube_casa_nome" data-idx="${idx}" data-team="${team}" value="${jogo.clube_casa_nome || ''}" placeholder="Time Mandante" style="font-size: 0.82rem; padding: 5px 8px; font-weight: 700;">
+            <input type="text" class="form-input h2h-recent-data" data-field="clube_casa_escudo" data-idx="${idx}" data-team="${team}" value="${jogo.clube_casa_escudo || ''}" placeholder="URL escudo" style="font-size: 0.7rem; padding: 3px 8px; margin-top: 3px;">
+          </div>
+          <div style="text-align: center; min-width: 60px;">
+            <div style="display: flex; gap: 3px; align-items: center; justify-content: center;">
+              <input type="number" class="form-input h2h-recent-data" data-field="placar_casa" data-idx="${idx}" data-team="${team}" value="${jogo.placar_casa !== null && jogo.placar_casa !== undefined ? jogo.placar_casa : ''}" placeholder="-" style="width: 38px; font-size: 0.95rem; font-weight: 900; text-align: center; padding: 5px 3px;" min="0">
+              <span style="color: var(--text-muted);">×</span>
+              <input type="number" class="form-input h2h-recent-data" data-field="placar_visitante" data-idx="${idx}" data-team="${team}" value="${jogo.placar_visitante !== null && jogo.placar_visitante !== undefined ? jogo.placar_visitante : ''}" placeholder="-" style="width: 38px; font-size: 0.95rem; font-weight: 900; text-align: center; padding: 5px 3px;" min="0">
+            </div>
+          </div>
+          <div style="flex: 1; min-width: 90px; text-align: right;">
+            <input type="text" class="form-input h2h-recent-data" data-field="clube_visitante_nome" data-idx="${idx}" data-team="${team}" value="${jogo.clube_visitante_nome || ''}" placeholder="Time Visitante" style="font-size: 0.82rem; padding: 5px 8px; font-weight: 700;">
+            <input type="text" class="form-input h2h-recent-data" data-field="clube_visitante_escudo" data-idx="${idx}" data-team="${team}" value="${jogo.clube_visitante_escudo || ''}" placeholder="URL escudo" style="font-size: 0.7rem; padding: 3px 8px; margin-top: 3px;">
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+          <input type="text" class="form-input h2h-recent-data" data-field="competicao" data-idx="${idx}" data-team="${team}" value="${jogo.competicao || 'Brasileirão Betano'}" placeholder="Competição" style="font-size: 0.78rem; padding: 4px 8px; flex: 1;">
+          <input type="text" class="form-input h2h-recent-data" data-field="obs" data-idx="${idx}" data-team="${team}" value="${jogo.obs || ''}" placeholder="Obs: ex x2 cartão" style="font-size: 0.78rem; padding: 4px 8px; width: 130px;">
+        </div>
+      `;
+
+      container.appendChild(row);
+    }
+
+    function addNewRecentGameRow() {
+      syncRecentTeamDOMToMemory(currentH2HRecentTeam);
+      const partida = allMatches.find(m => String(m.partida_id) === String(currentH2HPartidaId));
+      const h2h = allH2HData[currentH2HPartidaId] || {
+        partida_id: partida?.partida_id,
+        clube_casa_id: partida?.clube_casa_id,
+        clube_visitante_id: partida?.clube_visitante_id,
+        imagem_custom_500x500: null,
+        confrontos_diretos: [],
+        ultimos_jogos_mandante: [],
+        ultimos_jogos_visitante: []
+      };
+
+      const casa = allClubs.find(c => c.id === partida?.clube_casa_id) || {};
+      const vis  = allClubs.find(c => c.id === partida?.clube_visitante_id) || {};
+
+      const focusClub = currentH2HRecentTeam === 'home' ? casa : vis;
+
+      const novoJogo = {
+        id: `uj-new-${Date.now()}`,
+        data: '',
+        hora_status: 'FT',
+        competicao: 'Brasileirão Betano',
+        clube_casa_nome: focusClub.nome || '',
+        clube_casa_escudo: focusClub.escudo || '',
+        clube_visitante_nome: '',
+        clube_visitante_escudo: '',
+        placar_casa: null,
+        placar_visitante: null,
+        resultado: null,
+        is_casa: currentH2HRecentTeam === 'home',
+        is_brasileirao: true,
+        obs: ''
+      };
+
+      const key = currentH2HRecentTeam === 'home' ? 'ultimos_jogos_mandante' : 'ultimos_jogos_visitante';
+      if (!h2h[key]) h2h[key] = [];
+      h2h[key].push(novoJogo);
+      allH2HData[currentH2HPartidaId] = h2h;
+
+      const container = document.getElementById('h2h-recent-games-list');
+      const idx = h2h[key].length - 1;
+      renderH2HRecentRow(novoJogo, idx, container, currentH2HRecentTeam, casa, vis);
+      feather.replace();
+    }
+
+    function removeH2HRecentRow(idx, team) {
+      syncRecentTeamDOMToMemory(team);
+      const h2h = allH2HData[currentH2HPartidaId];
+      const key = team === 'home' ? 'ultimos_jogos_mandante' : 'ultimos_jogos_visitante';
+      if (h2h && h2h[key]) {
+        h2h[key].splice(idx, 1);
+        allH2HData[currentH2HPartidaId] = h2h;
+      }
+      const partida = allMatches.find(m => String(m.partida_id) === String(currentH2HPartidaId));
+      const casa = allClubs.find(c => c.id === partida?.clube_casa_id) || {};
+      const vis  = allClubs.find(c => c.id === partida?.clube_visitante_id) || {};
+      renderH2HRecentList(h2h, team, casa, vis);
+      feather.replace();
+    }
+
+    // ── Collect form data & Save ────────────────────────────────────────────────
+    function collectH2HFormData() {
+      syncH2HDirectDOMToMemory();
+      syncRecentTeamDOMToMemory(currentH2HRecentTeam);
+      const h2h = JSON.parse(JSON.stringify(allH2HData[currentH2HPartidaId] || {}));
+      return h2h;
+    }
+
+    async function saveCurrentH2HData() {
+      const h2h = collectH2HFormData();
+      h2h.partida_id = Number(currentH2HPartidaId);
+
+      try {
+        const res = await fetch('/api/admin/confrontos-h2h', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(h2h)
+        });
+        const json = await res.json();
+
+        if (json.sucesso) {
+          allH2HData[currentH2HPartidaId] = h2h;
+          const alert = document.getElementById('h2h-save-alert');
+          alert.style.display = 'block';
+          setTimeout(() => { alert.style.display = 'none'; }, 3500);
+        } else {
+          alert('Erro ao salvar: ' + (json.erro || 'desconhecido'));
+        }
+      } catch(e) {
+        alert('Erro de conexão: ' + e.message);
+      }
+    }
+
+    // ── Upload de Imagem 500x500 ou PDF ─────────────────────────────────────────
+    async function uploadH2HImage(input) {
+      const file = input.files[0];
+      if (!file) return;
+
+      const isPdf = file.type === 'application/pdf';
+      const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'application/pdf'];
+      if (!validTypes.includes(file.type)) {
+        alert('Formato inválido! Use JPG, PNG ou PDF.');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const b64 = e.target.result;
+
+        // Preview local imediato
+        const previewBox = document.getElementById('h2h-image-preview-box');
+        const previewImg = document.getElementById('h2h-image-preview-img');
+        const pdfText    = document.getElementById('h2h-pdf-preview-text');
+        const removeBtn  = document.getElementById('btn-remove-h2h-img');
+
+        previewBox.style.display = 'block';
+        removeBtn.style.display = 'inline-flex';
+
+        if (isPdf) {
+          previewImg.style.display = 'none';
+          pdfText.style.display = 'block';
+        } else {
+          previewImg.src = b64;
+          previewImg.style.display = 'block';
+          pdfText.style.display = 'none';
+        }
+
+        // Enviar para o servidor
+        try {
+          const res = await fetch('/api/admin/upload-h2h-image', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              partida_id: currentH2HPartidaId,
+              filename: file.name,
+              image_base64: b64
+            })
+          });
+          const json = await res.json();
+          if (json.sucesso) {
+            if (allH2HData[currentH2HPartidaId]) {
+              allH2HData[currentH2HPartidaId].imagem_custom_500x500 = json.url;
+            }
+          }
+        } catch(err) {
+          console.warn('Erro ao fazer upload da imagem H2H:', err);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeH2HImage() {
+      if (allH2HData[currentH2HPartidaId]) {
+        allH2HData[currentH2HPartidaId].imagem_custom_500x500 = null;
+      }
+      document.getElementById('h2h-image-preview-box').style.display = 'none';
+      document.getElementById('btn-remove-h2h-img').style.display = 'none';
+      document.getElementById('h2h-image-file').value = '';
+    }
+
+    // =========================================================================
+    // MÓDULO ADMIN: TABELA DE CLASSIFICAÇÃO & MOTOR AUTOMÁTICO EM TEMPO REAL
+    // =========================================================================
+    let adminStandingsData = null;
+
+    async function loadAdminStandings() {
+      try {
+        const res = await fetch('/api/classificacao');
+        adminStandingsData = await res.json();
+        renderAdminStandingsTable();
+        renderAdminStandingsMatchesGrid();
+      } catch(e) {
+        console.error("Erro ao carregar classificação admin:", e);
+      }
+    }
+
+    function renderAdminStandingsMatchesGrid() {
+      const grid = document.getElementById('admin-standings-matches-grid');
+      if (!grid || !allMatches || allMatches.length === 0) return;
+
+      grid.innerHTML = allMatches.map(m => {
+        const casa = allClubs.find(c => c.id === m.clube_casa_id) || {};
+        const fora = allClubs.find(c => c.id === m.clube_visitante_id) || {};
+        const pmVal = (m.placar_oficial_mandante !== null && m.placar_oficial_mandante !== undefined) ? m.placar_oficial_mandante : '';
+        const pvVal = (m.placar_oficial_visitante !== null && m.placar_oficial_visitante !== undefined) ? m.placar_oficial_visitante : '';
+
+        return `
+          <div style="background: #111722; border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 6px; flex: 1; min-width: 0;">
+              <img src="${casa.escudo || ''}" style="width: 20px; height: 20px; object-fit: contain;">
+              <span style="font-size: 0.8rem; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${casa.abreviacao || 'CASA'}</span>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 4px;">
+              <input type="number" id="match-score-casa-${m.partida_id}" value="${pmVal}" min="0" placeholder="-" style="width: 34px; text-align: center; background: #0b0f15; border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; color: #fff; padding: 2px 4px; font-weight: 900; font-size: 0.88rem;">
+              <span style="color: var(--text-muted); font-size: 0.75rem;">x</span>
+              <input type="number" id="match-score-fora-${m.partida_id}" value="${pvVal}" min="0" placeholder="-" style="width: 34px; text-align: center; background: #0b0f15; border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; color: #fff; padding: 2px 4px; font-weight: 900; font-size: 0.88rem;">
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 6px; flex: 1; justify-content: flex-end; min-width: 0;">
+              <span style="font-size: 0.8rem; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${fora.abreviacao || 'FORA'}</span>
+              <img src="${fora.escudo || ''}" style="width: 20px; height: 20px; object-fit: contain;">
+            </div>
+
+            <button class="nav-btn" onclick="saveMatchScoreAndRecalculate(${m.partida_id})" style="background: rgba(245, 158, 11, 0.15); border: 1px solid #f59e0b; color: #fbbf24; padding: 4px 8px; font-size: 0.72rem; font-weight: 800; border-radius: 4px;" title="Salva o placar deste jogo e recalcula a tabela inteira na hora!">
+              <i data-feather="check" style="width: 12px; height: 12px;"></i>
+            </button>
+          </div>
+        `;
+      }).join('');
+      feather.replace();
+    }
+
+    async function saveMatchScoreAndRecalculate(partidaId) {
+      const casaInput = document.getElementById(`match-score-casa-${partidaId}`);
+      const foraInput = document.getElementById(`match-score-fora-${partidaId}`);
+      const pm = casaInput ? casaInput.value : '';
+      const pv = foraInput ? foraInput.value : '';
+
+      try {
+        const res = await fetch('/api/admin/partidas/salvar-placar', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            partida_id: partidaId,
+            placar_mandante: pm !== '' ? parseInt(pm) : null,
+            placar_visitante: pv !== '' ? parseInt(pv) : null
+          })
+        });
+        const data = await res.json();
+        if (data.sucesso) {
+          adminStandingsData = data.classificacao;
+          renderAdminStandingsTable();
+          const alertEl = document.getElementById('standings-save-alert');
+          if (alertEl) {
+            alertEl.textContent = '⚡ Placar registrado com sucesso! A tabela de classificação foi recalculada e atualizada na hora!';
+            alertEl.style.display = 'block';
+            setTimeout(() => { alertEl.style.display = 'none'; }, 4000);
+          }
+        } else {
+          alert('Erro ao salvar placar: ' + (data.erro || 'Desconhecido'));
+        }
+      } catch(e) {
+        alert('Erro de conexão: ' + e.message);
+      }
+    }
+
+    async function recalculateStandingsAuto() {
+      try {
+        const res = await fetch('/api/admin/classificacao/recalcular', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({})
+        });
+        const data = await res.json();
+        if (data.sucesso) {
+          adminStandingsData = data.classificacao;
+          renderAdminStandingsTable();
+          alert('✨ Tabela de classificação recalculada com 100% de precisão matemática a partir de todos os resultados das partidas!');
+        } else {
+          alert('Erro ao recalcular: ' + (data.erro || 'Desconhecido'));
+        }
+      } catch(e) {
+        alert('Erro de conexão: ' + e.message);
+      }
+    }
+
+    function renderAdminStandingsTable() {
+      const tbody = document.getElementById('admin-standings-tbody');
+      if (!tbody || !adminStandingsData || !adminStandingsData.tabela) return;
+
+      tbody.innerHTML = adminStandingsData.tabela.map((row, idx) => {
+        const formStr = (row.ultimos_5 || []).join(',');
+        return `
+          <tr data-clube-id="${row.clube_id}">
+            <td style="text-align: center;">
+              <input type="number" class="form-input admin-st-pos" value="${idx + 1}" style="width: 42px; text-align: center; padding: 4px; font-weight: 800;">
+            </td>
+            <td>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <img src="${row.escudo}" style="width: 24px; height: 24px; object-fit: contain;" onerror="this.src='/images/mascote.png'">
+                <strong style="color: #fff; font-size: 0.88rem;">${row.nome}</strong>
+                <span class="pill-count" style="font-size: 0.7rem;">${row.abreviacao}</span>
+              </div>
+            </td>
+            <td style="text-align: center;">
+              <input type="number" class="form-input admin-st-j" value="${row.jogos}" style="width: 45px; text-align: center; padding: 4px;" min="0">
+            </td>
+            <td style="text-align: center;">
+              <input type="number" class="form-input admin-st-v" value="${row.vitorias}" style="width: 45px; text-align: center; padding: 4px;" min="0" oninput="autoCalcAdminRow(this)">
+            </td>
+            <td style="text-align: center;">
+              <input type="number" class="form-input admin-st-e" value="${row.empates}" style="width: 45px; text-align: center; padding: 4px;" min="0" oninput="autoCalcAdminRow(this)">
+            </td>
+            <td style="text-align: center;">
+              <input type="number" class="form-input admin-st-d" value="${row.derrotas}" style="width: 45px; text-align: center; padding: 4px;" min="0" oninput="autoCalcAdminRow(this)">
+            </td>
+            <td style="text-align: center;">
+              <input type="number" class="form-input admin-st-gp" value="${row.gols_pro}" style="width: 50px; text-align: center; padding: 4px;" min="0" oninput="autoCalcAdminRow(this)">
+            </td>
+            <td style="text-align: center;">
+              <input type="number" class="form-input admin-st-gc" value="${row.gols_contra}" style="width: 50px; text-align: center; padding: 4px;" min="0" oninput="autoCalcAdminRow(this)">
+            </td>
+            <td style="text-align: center;">
+              <input type="number" class="form-input admin-st-sg" value="${row.saldo_gols}" style="width: 50px; text-align: center; padding: 4px; font-weight: 700;">
+            </td>
+            <td style="text-align: center;">
+              <input type="text" class="form-input admin-st-form" value="${formStr}" placeholder="W,D,L,W,W" style="width: 120px; text-align: center; padding: 4px; font-size: 0.78rem; text-transform: uppercase;">
+            </td>
+            <td style="text-align: center;">
+              <input type="number" class="form-input admin-st-pts" value="${row.pontos}" style="width: 52px; text-align: center; padding: 4px; font-weight: 900; color: var(--cartola-orange);">
+            </td>
+          </tr>
+        `;
+      }).join('');
+      feather.replace();
+    }
+
+    function autoCalcAdminRow(inputEl) {
+      const tr = inputEl.closest('tr');
+      if (!tr) return;
+      const v = parseInt(tr.querySelector('.admin-st-v')?.value || 0);
+      const e = parseInt(tr.querySelector('.admin-st-e')?.value || 0);
+      const d = parseInt(tr.querySelector('.admin-st-d')?.value || 0);
+      const gp = parseInt(tr.querySelector('.admin-st-gp')?.value || 0);
+      const gc = parseInt(tr.querySelector('.admin-st-gc')?.value || 0);
+
+      const jEl = tr.querySelector('.admin-st-j');
+      const sgEl = tr.querySelector('.admin-st-sg');
+      const ptsEl = tr.querySelector('.admin-st-pts');
+
+      if (jEl) jEl.value = v + e + d;
+      if (sgEl) sgEl.value = gp - gc;
+      if (ptsEl) ptsEl.value = (v * 3) + e;
+    }
+
+    async function saveAdminStandings() {
+      const trs = document.querySelectorAll('#admin-standings-tbody tr');
+      if (trs.length === 0) return;
+
+      const novaTabela = [];
+
+      trs.forEach(tr => {
+        const cid = parseInt(tr.dataset.clubeId);
+        const orig = adminStandingsData.tabela.find(t => t.clube_id === cid) || {};
+
+        const pos = parseInt(tr.querySelector('.admin-st-pos')?.value || 1);
+        const j = parseInt(tr.querySelector('.admin-st-j')?.value || 0);
+        const v = parseInt(tr.querySelector('.admin-st-v')?.value || 0);
+        const e = parseInt(tr.querySelector('.admin-st-e')?.value || 0);
+        const d = parseInt(tr.querySelector('.admin-st-d')?.value || 0);
+        const gp = parseInt(tr.querySelector('.admin-st-gp')?.value || 0);
+        const gc = parseInt(tr.querySelector('.admin-st-gc')?.value || 0);
+        const sg = parseInt(tr.querySelector('.admin-st-sg')?.value || (gp - gc));
+        const pts = parseInt(tr.querySelector('.admin-st-pts')?.value || ((v * 3) + e));
+        const formVal = (tr.querySelector('.admin-st-form')?.value || '').split(',').map(s => s.trim().toUpperCase()).filter(Boolean);
+
+        let zona = 'neutra';
+        if (pos <= 4) zona = 'libertadores';
+        else if (pos === 5) zona = 'pre_libertadores';
+        else if (pos >= 6 && pos <= 12) zona = 'sulamericana';
+        else if (pos >= 17) zona = 'rebaixamento';
+
+        novaTabela.push({
+          ...orig,
+          posicao: pos,
+          clube_id: cid,
+          jogos: j,
+          vitorias: v,
+          empates: e,
+          derrotas: d,
+          gols_pro: gp,
+          gols_contra: gc,
+          saldo_gols: sg,
+          pontos: pts,
+          ultimos_5: formVal.length > 0 ? formVal : (orig.ultimos_5 || ['D','D','D','D','D']),
+          zona: zona
+        });
+      });
+
+      // Ordenar por posição informada
+      novaTabela.sort((a, b) => a.posicao - b.posicao);
+
+      const payload = {
+        temporada: 2026,
+        rodada_atual: currentRound || 23,
+        competicao: 'Brasileirão Série A 2026',
+        tabela: novaTabela
+      };
+
+      try {
+        const res = await fetch('/api/admin/classificacao', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const json = await res.json();
+        if (json.sucesso) {
+          adminStandingsData = payload;
+          renderAdminStandingsTable();
+          const alertEl = document.getElementById('standings-save-alert');
+          if (alertEl) {
+            alertEl.textContent = '✅ Tabela de Classificação salva com sucesso!';
+            alertEl.style.display = 'block';
+            setTimeout(() => { alertEl.style.display = 'none'; }, 3500);
+          }
+        } else {
+          alert('Erro ao salvar classificação: ' + (json.erro || 'Desconhecido'));
+        }
+      } catch(e) {
+        alert('Erro de conexão ao salvar classificação: ' + e.message);
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', checkAuth);
+  </script>
+
+</body>
+</html>

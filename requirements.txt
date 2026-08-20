@@ -1,0 +1,2 @@
+# Sistema Lendas do Cartola FC 2026
+# O sistema utiliza apenas a biblioteca padrão do Python (Zero dependências externas necessárias)

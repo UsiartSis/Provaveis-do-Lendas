@@ -1,0 +1,55 @@
+{
+  "manifest_version": 3,
+  "name": "Lendas Cartola Sync — Escalação 1-Clique",
+  "version": "1.0.0",
+  "description": "Sincroniza automaticamente a escalação montada no Lendas do Cartola 2026 diretamente para o site oficial do Cartola FC.",
+  "permissions": [
+    "cookies",
+    "storage",
+    "tabs",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "*://*.globo.com/*",
+    "*://globo.com/*",
+    "https://*.globo.com/*",
+    "https://globo.com/*",
+    "https://cartola.globo.com/*",
+    "https://api.cartola.globo.com/*",
+    "https://login.globo.com/*",
+    "https://minhaconta.globo.com/*",
+    "https://ge.globo.com/*",
+    "http://localhost/*",
+    "http://127.0.0.1/*",
+    "https://*.vercel.app/*",
+    "https://*.onrender.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Lendas Cartola Sync"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://localhost/*",
+        "http://127.0.0.1/*",
+        "https://*.vercel.app/*",
+        "https://*.onrender.com/*"
+      ],
+      "js": ["content_app.js"],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "https://cartola.globo.com/*",
+        "https://*.cartola.globo.com/*"
+      ],
+      "js": ["content_cartola.js"],
+      "run_at": "document_end"
+    }
+  ]
+}

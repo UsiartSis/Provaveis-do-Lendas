@@ -1,0 +1,34 @@
+{
+  "nome_time": "G4 do Cartola (TC 01)",
+  "patrimonio": 99.67,
+  "formacao": "4-3-3",
+  "esquema_id": 3,
+  "capitao": 117930,
+  "titulares": {
+    "gol": 72018,
+    "lat_1": 102130,
+    "lat_2": 72493,
+    "zag_1": 72951,
+    "zag_2": 97653,
+    "mei_1": 68685,
+    "mei_2": 90703,
+    "mei_3": 141344,
+    "ata_1": 117930,
+    "ata_2": 102928,
+    "ata_3": 83257,
+    "tec": 73476
+  },
+  "reservas": {
+    "1": 110698,
+    "2": 132412,
+    "3": 130307,
+    "4": 146991,
+    "5": 123738
+  },
+  "nome_cartola": "Jeffinho do Cartola",
+  "url_escudo_svg": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/cartola_assets_3/escudo/a1/35/47/0095875a8d-9293-4d0b-8507-4b2368a1eaa120260127053547",
+  "url_escudo_png": "https://s2-cartola.glbimg.com/MjOZ7k_2UdsUwtv-oCUJj1cnUpQ=/https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/cartola_assets_3/escudo/a1/35/47/0095875a8d-9293-4d0b-8507-4b2368a1eaa120260127053547",
+  "pontos_ultima_rodada": 19.6700439453125,
+  "pontos_total": 939.5390625,
+  "reserva_luxo": 123738
+}

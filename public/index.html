@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lendas do Cartola Prováveis 2026 - Escalações &amp; Scouts</title>
+  <link rel="icon" type="image/png" href="/mascote.png">
+  <script src="https://unpkg.com/feather-icons"></script>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    /* Full Screen Login Gateway */
+    .auth-gateway-overlay {
+      position: fixed; inset: 0;
+      background: radial-gradient(circle at 50% 30%, #1a2536 0%, #0c1017 60%, #05070a 100%);
+      z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 1.5rem;
+    }
+    .auth-gateway-card {
+      background: #111620; border: 1px solid rgba(255,255,255,0.12); border-radius: 20px;
+      padding: 36px; max-width: 420px; width: 100%;
+      box-shadow: 0 25px 60px -10px rgba(0,0,0,0.9);
+      animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes popIn { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+    /* 3D Digital Clock */
+    .clock-3d-container {
+      display: flex; align-items: center; gap: 6px;
+      background: #080b0f; border: 1px solid rgba(255,98,0,0.3);
+      padding: 6px 12px; border-radius: 10px;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.8), 0 0 15px rgba(255,98,0,0.2);
+    }
+    .digital-flip-box {
+      background: #161c26; color: #ff6200;
+      font-family: 'Courier New', monospace; font-size: 1.2rem; font-weight: 900;
+      letter-spacing: 1px; padding: 2px 8px; border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      text-shadow: 0 0 10px rgba(255,98,0,0.6);
+      display: flex; align-items: center; justify-content: center; min-width: 38px;
+    }
+    .digital-colon { color: #ff6200; font-size: 1.2rem; font-weight: 900; animation: blink 1s infinite; }
+    @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.2; } }
+
+    /* Letreiro Digital (Marquee) */
+    .marquee-wrapper {
+      width: 100%; overflow: hidden;
+      background: linear-gradient(90deg, #0a0e14 0%, #111720 40%, #0a0e14 100%);
+      border-top: 1px solid rgba(255,98,0,0.2);
+      border-bottom: 1px solid rgba(255,98,0,0.2);
+      padding: 8px 0; position: relative;
+    }
+    .marquee-label {
+      position: absolute; left: 0; top: 0; bottom: 0; z-index: 5;
+      background: var(--cartola-orange); color: #000;
+      display: flex; align-items: center; padding: 0 14px;
+      font-size: 0.7rem; font-weight: 900; letter-spacing: 1px; white-space: nowrap;
+    }
+    .marquee-track {
+      display: flex; gap: 0; animation: marqueeScroll 40s linear infinite;
+      padding-left: 140px;
+    }
+    .marquee-track:hover { animation-play-state: paused; }
+    .marquee-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 0 24px; white-space: nowrap; font-size: 0.82rem; font-weight: 700;
+      border-right: 1px solid rgba(255,255,255,0.08);
+    }
+    .marquee-item img { width: 20px; height: 20px; object-fit: contain; }
+    .marquee-item .m-score { color: var(--cartola-orange); font-weight: 900; font-size: 0.9rem; }
+    .marquee-item .m-rank { background: rgba(255,98,0,0.2); color: var(--cartola-orange); border-radius: 4px; padding: 1px 5px; font-size: 0.7rem; font-weight: 900; }
+    @keyframes marqueeScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+    /* Dúvida pulsing badge on pitch */
+    @keyframes pulseQuestion {
+      0%, 100% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(251,191,36,0.7); }
+      50% { transform: scale(1.25); opacity: 1; box-shadow: 0 0 0 6px rgba(251,191,36,0); }
+    }
+    .player-duvida-badge {
+      position: absolute; top: -4px; right: -4px;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: #fbbf24; color: #000;
+      font-size: 0.65rem; font-weight: 900;
+      display: flex; align-items: center; justify-content: center;
+      border: 2px solid #0d121a;
+      animation: pulseQuestion 1.2s ease-in-out infinite;
+      z-index: 10;
+    }
+
+    /* Modal detail rows highlight */
+    .scout-detail-row.used { background: rgba(255,122,0,0.08); border-left: 2px solid var(--cartola-orange); }
+    .scout-detail-row.used .scout-detail-label,
+    .scout-detail-row.used .scout-detail-val { color: #ff7a00; }
+  </style>
+</head>
+<body>
+
+  <!-- Gateway de Autenticação Obrigatório -->
+  <div class="auth-gateway-overlay" id="auth-gateway">
+    <div class="auth-gateway-card">
+      <div style="text-align: center; margin-bottom: 24px;">
+        <div class="mascot-login-container">
+          <img src="/images/mascote.png" alt="Mascote Lendas do Cartola" class="mascot-login-img">
+        </div>
+        <div class="logo-badge" style="display: inline-block; margin-bottom: 12px;">LENDAS DO CARTOLA</div>
+        <h2 style="font-size: 1.45rem; font-weight: 800; color: #ffffff;">Acesso ao Sistema</h2>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">
+          Informe suas credenciais para visualizar as escalações e scouts.
+        </p>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 6px;">Usuário</label>
+        <input type="text" id="login-user-input" placeholder="Digite seu usuário" 
+          style="width: 100%; background: #0b0f15; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: #fff; padding: 12px 14px; font-size: 0.92rem; outline: none; box-sizing: border-box;">
+      </div>
+
+      <div style="margin-bottom: 16px;" id="login-pass-container">
+        <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 6px;">
+          Senha
+        </label>
+        <input type="password" id="login-pass-input" placeholder="Digite sua senha"
+          style="width: 100%; background: #0b0f15; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: #fff; padding: 12px 14px; font-size: 0.92rem; outline: none; box-sizing: border-box;">
+      </div>
+
+      <div id="login-error-alert" style="display: none; color: #ef4444; font-size: 0.85rem; margin-bottom: 14px; font-weight: 600; text-align: center;"></div>
+
+      <button class="nav-btn nav-btn-primary" style="width: 100%; justify-content: center; padding: 12px; font-size: 0.95rem;" onclick="processLogin()">
+        <i data-feather="log-in"></i> Acessar Sistema
+      </button>
+    </div>
+  </div>
+
+  <!-- Top Navbar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="/" class="brand-logo">
+        <img src="/images/mascote.png" alt="Mascote Lendas" class="mascot-navbar">
+        <div class="brand-title">LENDAS DO CARTOLA <span>PROVÁVEIS 2026</span></div>
+      </a>
+
+      <!-- Navegação por Abas -->
+      <div class="nav-tabs-container">
+        <button class="nav-tab-btn active" id="tab-btn-provaveis" onclick="switchMainTab('provaveis')">
+          <i data-feather="users"></i> Prováveis da Rodada
+        </button>
+        <button class="nav-tab-btn" id="tab-btn-top5" onclick="switchMainTab('top5')">
+          <i data-feather="award"></i> Top 5 por Posição
+          <span style="background:var(--cartola-orange); color:#000; font-size: 0.62rem; font-weight:900; padding:2px 6px; border-radius:4px; margin-left: 2px;">DESTAQUES</span>
+        </button>
+        <button class="nav-tab-btn" id="tab-btn-top5-sg" onclick="switchMainTab('top5-sg')">
+          <i data-feather="shield"></i> Top 5 SG
+          <span style="background:#8b5cf6; color:#fff; font-size: 0.62rem; font-weight:900; padding:2px 6px; border-radius:4px; margin-left: 2px;">PROBABILIDADE</span>
+        </button>
+        <button class="nav-tab-btn" id="tab-btn-escalacoes-variadas" onclick="switchMainTab('escalacoes-variadas')">
+          <i data-feather="sliders"></i> Escalações Variadas
+          <span style="background:#ec4899; color:#fff; font-size: 0.62rem; font-weight:900; padding:2px 6px; border-radius:4px; margin-left: 2px;">ESTRATÉGIAS</span>
+        </button>
+        <button class="nav-tab-btn" id="tab-btn-escalacao" onclick="switchMainTab('escalacao')">
+          <i data-feather="check-circle"></i> Escalar Time
+          <span style="background:#10b981; color:#000; font-size: 0.62rem; font-weight:900; padding:2px 6px; border-radius:4px; margin-left: 2px;">NOVO</span>
+        </button>
+        <button class="nav-tab-btn" id="tab-btn-classificacao" onclick="switchMainTab('classificacao')">
+          <i data-feather="bar-chart-2"></i> Classificação
+          <span style="background:#3b82f6; color:#fff; font-size: 0.62rem; font-weight:900; padding:2px 6px; border-radius:4px; margin-left: 2px;">TABELA</span>
+        </button>
+      </div>
+
+      <div class="nav-actions">
+        <!-- Alternador de Estilo Visual de Fotos -->
+        <button class="nav-btn" id="btn-toggle-photo-mode" onclick="toggleMainPhotoMode()" title="Alternar entre Fotos das Pastas e Uniforme Oficial da API do Cartola">
+          <i data-feather="image"></i> <span id="photo-mode-label">Fotos Locais</span>
+        </button>
+
+        <div id="user-badge" style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; font-weight: 700; color: var(--text-secondary); background: rgba(255,255,255,0.06); padding: 6px 12px; border-radius: 9999px;">
+          <i data-feather="user" style="width: 16px; height: 16px; color: var(--cartola-orange);"></i>
+          <span id="user-name-display">Visitante</span>
+        </div>
+        
+        <!-- Botão Admin (Visível APENAS para Admin Lendas) -->
+        <a href="/admin.html" class="nav-btn nav-btn-primary" id="btn-admin-nav" style="display: none;">
+          <i data-feather="sliders"></i> Painel Admin
+        </a>
+
+        <button class="nav-btn" onclick="logoutSession()" style="color: #ef4444; border-color: rgba(239,68,68,0.25);">
+          <i data-feather="log-out"></i> Sair
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Market Status Bar com Relógio Digital 3D -->
+  <div class="market-strip">
+    <div class="market-container">
+      <div class="market-info">
+        <div class="status-dot" id="market-status-dot"></div>
+        <div class="market-title" id="market-status-text">MERCADO FECHADO • RODADA 23 EM ANDAMENTO</div>
+      </div>
+      
+      <!-- 3D Digital Clock -->
+      <div class="clock-3d-container">
+        <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; margin-right: 4px;" id="clock-label-text">STATUS:</span>
+        <div class="digital-flip-box" id="clock-box-1">00</div>
+        <span class="digital-colon">:</span>
+        <div class="digital-flip-box" id="clock-box-2">00</div>
+        <span class="digital-colon">:</span>
+        <div class="digital-flip-box" id="clock-box-3">00</div>
+        <span class="digital-colon">:</span>
+        <div class="digital-flip-box" id="clock-box-4">00</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Letreiro Digital dos 10 Destaques -->
+  <div class="marquee-wrapper" id="marquee-wrapper">
+    <div class="marquee-label" id="marquee-label">⭐ DESTAQUES R22</div>
+    <div class="marquee-track" id="marquee-track">
+      <div class="marquee-item" style="color: var(--text-muted);">Carregando destaques da rodada...</div>
+    </div>
+  </div>
+
+  <!-- Main Content Wrapper -->
+  <main class="main-wrapper">
+    
+    <!-- ========================================================================= -->
+    <!-- VIEW 1: PROVÁVEIS DA RODADA (10 JOGOS + CAMPINHO 3D) -->
+    <!-- ========================================================================= -->
+    <div id="view-provaveis">
+      <!-- 10 Jogos da Rodada -->
+      <section class="matches-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <i data-feather="calendar"></i> <span id="round-title-display">10 JOGOS DA RODADA 23</span>
+          </h2>
+          <span class="pill-count" style="font-size: 0.85rem; font-weight: 700;">20 CLUBES DA SÉRIE A</span>
+        </div>
+
+        <div class="matches-grid" id="matches-grid">
+          <div style="padding: 20px; color: var(--text-muted);">Carregando confrontos oficiais...</div>
+        </div>
+      </section>
+
+      <!-- Tactical View & Squad Analyzer -->
+      <section class="view-grid">
+        
+        <!-- 3D Tactical Pitch View -->
+        <div class="pitch-container">
+          <div class="pitch-header">
+            <div class="active-team-info">
+              <img src="/images/Flamengo/Flamengo.png" alt="Escudo" class="active-team-crest" id="active-team-crest">
+              <div>
+                <h1 class="active-team-name" id="active-team-name">Flamengo</h1>
+                <div class="active-team-sub" id="active-team-sub">Escalação Provável • Clique no rosto do atleta para abrir o Scout</div>
+              </div>
+            </div>
+
+            <div class="team-toggle-btns" id="team-toggle-container">
+              <button class="toggle-btn active" id="btn-mandante">MANDANTE</button>
+              <button class="toggle-btn" id="btn-visitante">VISITANTE</button>
+            </div>
+          </div>
+
+          <!-- 3D Field -->
+          <div class="field-3d-wrapper">
+            <div class="field-surface" id="soccer-field">
+              <!-- Markings -->
+              <div class="field-penalty-area-top"></div>
+              <div class="field-midline"></div>
+              <div class="field-center-circle"></div>
+              <div class="field-penalty-area-bottom"></div>
+
+              <!-- Attack Row -->
+              <div class="pitch-row" id="row-ataque"></div>
+              <!-- Midfield Row -->
+              <div class="pitch-row" id="row-meio"></div>
+              <!-- Defense Row -->
+              <div class="pitch-row" id="row-defesa"></div>
+              <!-- Goalkeeper Row -->
+              <div class="pitch-row" id="row-goleiro"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Separated Cards -->
+        <aside class="sidebar-panel">
+          
+          <!-- Card 1: Dúvidas no Time -->
+          <div class="side-card">
+            <div class="side-card-title">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <i data-feather="help-circle" style="color: var(--status-duvida);"></i> Dúvidas no Time
+              </div>
+              <span class="pill-count duvida" id="count-duvidas">0</span>
+            </div>
+            <div id="list-duvidas">
+              <div style="color: var(--text-muted); font-size: 0.82rem;">Nenhuma dúvida registrada.</div>
+            </div>
+          </div>
+
+          <!-- Card 2: Lesionados / Departamento Médico -->
+          <div class="side-card">
+            <div class="side-card-title">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <i data-feather="activity" style="color: var(--status-lesionado);"></i> Lesionados (DM)
+              </div>
+              <span class="pill-count lesionado" id="count-lesionados">0</span>
+            </div>
+            <div id="list-lesionados">
+              <div style="color: var(--text-muted); font-size: 0.82rem;">Nenhum lesionado no momento.</div>
+            </div>
+          </div>
+
+          <!-- Card 3: Suspensos -->
+          <div class="side-card">
+            <div class="side-card-title">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <i data-feather="slash" style="color: #f87171;"></i> Suspensos (Cartões)
+              </div>
+              <span class="pill-count suspenso" id="count-suspensos">0</span>
+            </div>
+            <div id="list-suspensos">
+              <div style="color: var(--text-muted); font-size: 0.82rem;">Nenhum suspenso registrado.</div>
+            </div>
+          </div>
+
+        </aside>
+
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- WIDGET: CONFRONTO DIRETO & ÚLTIMOS 5 JOGOS (H2H)                  -->
+      <!-- ================================================================= -->
+      <section id="h2h-widget-section" style="margin-top: 24px; display: none;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;" class="h2h-main-grid">
+
+          <!-- Coluna 1: Confrontos Diretos -->
+          <div class="side-card" style="padding: 0; overflow: hidden;">
+            <div style="padding: 14px 18px; border-bottom: 1px solid rgba(255,255,255,0.08); background: rgba(0,0,0,0.2);">
+              <h3 style="font-size: 1rem; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 8px; margin: 0;">
+                <i data-feather="shield" style="color: var(--cartola-orange); width: 18px; height: 18px;"></i>
+                Confrontos Diretos
+              </h3>
+              <div style="display: flex; gap: 12px; margin-top: 10px;">
+                <label style="display: flex; align-items: center; gap: 5px; font-size: 0.78rem; cursor: pointer; color: var(--text-muted);">
+                  <input type="checkbox" id="h2h-filter-time-a" onchange="renderH2HWidget()" style="accent-color: var(--cartola-orange);">
+                  <span id="h2h-filter-a-label">Nenhum time</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 5px; font-size: 0.78rem; cursor: pointer; color: var(--text-muted);">
+                  <input type="checkbox" id="h2h-filter-comp" checked onchange="renderH2HWidget()" style="accent-color: var(--cartola-orange);">
+                  Esta Competição
+                </label>
+              </div>
+            </div>
+            <div id="h2h-direct-widget" style="padding: 10px 14px; display: flex; flex-direction: column; gap: 2px; max-height: 380px; overflow-y: auto;">
+              <div style="color: var(--text-muted); font-size: 0.82rem; text-align: center; padding: 24px;">Selecione um jogo para ver os confrontos diretos.</div>
+            </div>
+          </div>
+
+          <!-- Coluna 2: Últimos 5 Jogos / Partidas dos Times -->
+          <div class="side-card" style="padding: 0; overflow: hidden;">
+            <div style="padding: 14px 18px; border-bottom: 1px solid rgba(255,255,255,0.08); background: rgba(0,0,0,0.2);">
+              <h3 style="font-size: 1rem; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 8px; margin: 0 0 10px 0;">
+                <i data-feather="activity" style="color: #10b981; width: 18px; height: 18px;"></i>
+                Partidas • Últimos 5 Jogos
+              </h3>
+              <!-- Tabs dos dois times -->
+              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <div style="display: flex; gap: 4px;">
+                  <button id="btn-widget-team-home" class="nav-btn nav-btn-primary" onclick="switchWidgetTeam('home')" style="font-size: 0.78rem; padding: 5px 10px; display: flex; align-items: center; gap: 6px;">
+                    <img id="widget-home-crest" src="" style="width: 20px; height: 20px; object-fit: contain;" onerror="this.style.display='none'">
+                    <span id="widget-home-name">Mandante</span>
+                  </button>
+                  <button id="btn-widget-team-away" class="nav-btn" onclick="switchWidgetTeam('away')" style="font-size: 0.78rem; padding: 5px 10px; display: flex; align-items: center; gap: 6px;">
+                    <span id="widget-away-name">Visitante</span>
+                    <img id="widget-away-crest" src="" style="width: 20px; height: 20px; object-fit: contain;" onerror="this.style.display='none'">
+                  </button>
+                </div>
+                <label style="display: flex; align-items: center; gap: 5px; font-size: 0.78rem; cursor: pointer; color: var(--text-muted);">
+                  <input type="checkbox" id="h2h-recent-filter-casa" onchange="renderH2HRecentWidget()" style="accent-color: var(--cartola-orange);">
+                  Casa
+                </label>
+                <label style="display: flex; align-items: center; gap: 5px; font-size: 0.78rem; cursor: pointer; color: var(--text-muted);">
+                  <input type="checkbox" id="h2h-recent-filter-comp" checked onchange="renderH2HRecentWidget()" style="accent-color: var(--cartola-orange);">
+                  Esta Competição
+                </label>
+              </div>
+            </div>
+
+            <!-- Imagem 500x500 (se houver) -->
+            <div id="h2h-custom-image-container" style="display: none; padding: 12px; background: rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,255,255,0.06); text-align: center;">
+              <img id="h2h-custom-image" src="" style="max-width: 100%; max-height: 220px; object-fit: contain; border-radius: 8px;" onerror="this.parentElement.style.display='none'">
+            </div>
+
+            <div id="h2h-recent-widget" style="padding: 10px 14px; display: flex; flex-direction: column; gap: 2px; max-height: 340px; overflow-y: auto;">
+              <div style="color: var(--text-muted); font-size: 0.82rem; text-align: center; padding: 24px;">Selecione um jogo para ver o histórico recente.</div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- VIEW 2: ESCALAÇÃO MEU TIME (G4 DO CARTOLA FC) — IDÊNTICO À REFERÊNCIA -->
+    <!-- ========================================================================= -->
+    <div id="view-escalacao" class="escalacao-view-wrapper" style="display: none;">
+      
+      <!-- Top Bar da Escalação -->
+      <div class="escalacao-header-bar">
+        <div class="escalacao-title-area" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+          <h1 class="escalacao-main-title">ESCALAÇÃO</h1>
+          
+          <div class="market-countdown-pill">
+            <i data-feather="clock" style="width: 15px; height: 15px;"></i>
+            <span id="my-team-countdown-text">MERCADO ABERTO • R23</span>
+          </div>
+        </div>
+
+        <div class="escalacao-controls-area">
+          <!-- Seletor do Esquema Tático -->
+          <select class="scheme-select-pill" id="my-scheme-select" onchange="changeMyTeamFormation(this.value)">
+            <option value="4-3-3" selected>4-3-3 ▾</option>
+            <option value="4-4-2">4-4-2 ▾</option>
+            <option value="3-4-3">3-4-3 ▾</option>
+            <option value="3-5-2">3-5-2 ▾</option>
+            <option value="4-5-1">4-5-1 ▾</option>
+            <option value="5-3-2">5-3-2 ▾</option>
+            <option value="5-4-1">5-4-1 ▾</option>
+          </select>
+
+          <!-- Badges de Patrimônio Oficial, Custo e Saldo -->
+          <div class="budget-capsule" style="cursor: pointer;" onclick="editMyPatrimonio()" title="Clique para editar o seu patrimônio do Cartola">
+            <div class="cs-icon-badge" style="background: #f59e0b; color: #000;">C$</div>
+            <span>PATRIMÔNIO</span>
+            <span class="val-display" id="my-team-patrimonio-display" style="color: #fbbf24;">150.00</span>
+            <i data-feather="edit-2" style="width: 12px; height: 12px; color: var(--text-muted);"></i>
+          </div>
+
+          <div class="budget-capsule">
+            <div class="cs-icon-badge" style="background: #ef4444; color: #fff;">C$</div>
+            <span>PREÇO TIME</span>
+            <span class="val-display" id="my-team-spent-display" style="color: #f87171;">0.00</span>
+          </div>
+
+          <div class="budget-capsule">
+            <div class="cs-icon-badge" style="background: #10b981; color: #000;">C$</div>
+            <span>RESTANTE</span>
+            <span class="val-display" id="my-team-saldo-display" style="color: #10b981;">150.00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD DE PERFIL OFICIAL DO TIME (REFERÊNCIA GLOBO/CARTOLA) -->
+      <div class="cartola-profile-card-container" id="cartola-profile-card">
+        <div class="cartola-profile-shield-wrap">
+          <img id="cartola-card-shield-img" src="/images/mascote.png" alt="Escudo Oficial" class="cartola-profile-shield-img" onerror="this.src='/images/mascote.png'">
+          <div class="cartola-profile-badge-overlay" title="Cartoleiro PRO">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 19H20V21H4V19Z" fill="#1e293b"/>
+              <path d="M6 19L7 8H17L18 19H6Z" fill="#1e293b"/>
+              <path d="M6.5 15H17.5V18H6.5V15Z" fill="#ff6200"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="cartola-profile-team-name" id="cartola-card-team-name">Tio Patinha do G4</div>
+        <div class="cartola-profile-owner-name" id="cartola-card-owner-name">Jeffinho do cartola</div>
+
+        <button class="cartola-profile-btn-perfil" onclick="syncWithCartolaExtension()" title="Sincronizar dados em tempo real com a extensão oficial">
+          Sincronizar Perfil Cartola
+        </button>
+
+        <div class="cartola-profile-stats-bar">
+          <div class="cartola-profile-stat-col">
+            <span class="cartola-profile-stat-label">PATRIMÔNIO</span>
+            <span class="cartola-profile-stat-value patrimonio" id="cartola-card-patrimonio">C$ 166.16</span>
+          </div>
+          <div class="cartola-profile-stat-col">
+            <span class="cartola-profile-stat-label">ÚLT. PONTUAÇÃO</span>
+            <span class="cartola-profile-stat-value" id="cartola-card-pontos-ult">30.93</span>
+          </div>
+          <div class="cartola-profile-stat-col">
+            <span class="cartola-profile-stat-label">TOTAL</span>
+            <span class="cartola-profile-stat-value" id="cartola-card-pontos-tot">1330.03</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid Principal: Campinho (Esquerda) + Lista do Elenco (Direita) -->
+      <div class="escalacao-grid">
+        
+        <!-- Coluna da Esquerda: Campinho Oficial & Banco de Reservas -->
+        <div class="my-pitch-card">
+          <div class="my-field-wrapper">
+            <div class="my-field-surface" id="my-field-surface">
+              <!-- Marcações do Campo -->
+              <div class="my-field-penalty-top"></div>
+              <div class="my-field-midline"></div>
+              <div class="my-field-center-circle"></div>
+              <div class="my-field-penalty-bottom"></div>
+
+              <!-- Linha de Ataque -->
+              <div class="my-field-row" id="my-row-ataque"></div>
+              <!-- Linha de Meio-Campo -->
+              <div class="my-field-row" id="my-row-meio"></div>
+              <!-- Linha de Defesa -->
+              <div class="my-field-row" id="my-row-defesa"></div>
+              
+              <!-- Linha de Goleiro Centralizado, Marca d'água e Técnico -->
+              <div class="my-bottom-pitch-area">
+                <div class="my-field-tactical-watermark" id="my-tactical-watermark">4-3-3</div>
+                <div class="my-gol-slot-container" id="my-slot-gol"></div>
+                <div class="my-tec-slot-container" id="my-slot-tec"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Banco de Reservas -->
+          <div class="my-reserves-container">
+            <div class="my-reserves-title">BANCO DE RESERVAS</div>
+            <div class="my-reserves-row" id="my-reserves-row">
+              <!-- GOL, LAT, ZAG, MEI, ATA -->
+            </div>
+          </div>
+
+          <!-- Botão Gato Mestre Assistente -->
+          <div class="gato-mestre-banner" onclick="openGatoMestreAssistant()">
+            <i data-feather="zap"></i>
+            <span>GATO MESTRE Assistente de escalação →</span>
+          </div>
+        </div>
+
+        <!-- Coluna da Direita: Lista dos Jogadores Escalados & Ações -->
+        <div class="squad-summary-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <strong style="font-size: 0.95rem; color: #fff;">G4 do Cartola FC</strong>
+            <span style="font-size: 0.75rem; color: var(--text-muted);" id="my-squad-count-label">0 / 12 escalados</span>
+          </div>
+
+          <div class="squad-list-scroll" id="my-squad-summary-list">
+            <!-- 11 Titulares + 1 Técnico renderizados dinamicamente -->
+          </div>
+
+          <div class="squad-reserves-divider">BANCO DE RESERVAS</div>
+
+          <div class="squad-list-scroll" id="my-reserves-summary-list" style="max-height: 140px;">
+            <!-- 5 Reservas renderizados dinamicamente -->
+          </div>
+
+          <!-- Barra de Ações Inferior -->
+          <div class="squad-action-bar">
+            <button class="btn-circle-action" onclick="clearMyLineupPrompt()" title="Limpar Escalação">
+              <i data-feather="trash-2"></i>
+            </button>
+            <button class="btn-circle-action" onclick="autoEscalarProvaveis()" title="Escalar Automaticamente os Mais Prováveis">
+              <i data-feather="zap"></i>
+            </button>
+            <button class="btn-submit-time" id="btn-submit-cartola" onclick="submitLineupToCartola()">
+              <i data-feather="send"></i>
+              <span id="btn-submit-label">TIME ESCALADO</span>
+            </button>
+          </div>
+
+          <div id="extension-status-feedback" style="margin-top: 12px; font-size: 0.75rem; text-align: center; color: var(--text-muted);">
+            <span id="ext-indicator-dot" style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10b981; margin-right: 4px;"></span>
+            <span id="ext-indicator-text">Sincronização 1-Clique com Extensão Oficial</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- VIEW 3: TOP 5 POR POSIÇÃO (ALGORITMO ESPECIALIZADO POR SCOUTS) -->
+    <!-- ========================================================================= -->
+    <div id="view-top5" class="top5-view-wrapper" style="display: none;">
+      
+      <!-- Banner de Cabeçalho do Top 5 -->
+      <div class="top5-header-card">
+        <div class="top5-header-main">
+          <div class="top5-badge-tag">
+            <i data-feather="award"></i> ALGORITMO LENDAS CARTOLA 2026
+          </div>
+          <h1 class="top5-main-title">Top 5 Melhores Opções por Posição</h1>
+          <p class="top5-subtitle">
+            Rankings calculados por cruzamento de scouts específicos da posição, regularidade e médias para mitigar riscos na rodada.
+          </p>
+        </div>
+
+        <div class="top5-actions-head">
+          <button class="top5-btn-magic" onclick="autoEscalarTop5Lineup()" title="Preencher Meu Time com as melhores peças do Top 5">
+            <i data-feather="zap"></i> Auto Escalar Melhores do Top 5
+          </button>
+        </div>
+      </div>
+
+      <!-- Resumo das Fórmulas / Critérios Oficiais Lendas -->
+      <div class="top5-criteria-banner">
+        <div class="top5-crit-item">
+          <span class="top5-crit-pos gol">GOL</span>
+          <span class="top5-crit-desc">Foco em <strong>SG (Saldo de Gols)</strong> + <strong>Defesas (DE/DP)</strong> + Média</span>
+        </div>
+        <div class="top5-crit-item">
+          <span class="top5-crit-pos lat">LAT</span>
+          <span class="top5-crit-desc">Foco em <strong>Desarmes (DS)</strong> + <strong>Média Básica</strong> + <strong>Gols/Assistências (G+A)</strong></span>
+        </div>
+        <div class="top5-crit-item">
+          <span class="top5-crit-pos zag">ZAG</span>
+          <span class="top5-crit-desc">Foco em <strong>Média Básica sólida</strong> + <strong>Desarmes (DS)</strong> + SG</span>
+        </div>
+        <div class="top5-crit-item">
+          <span class="top5-crit-pos mei">MEI</span>
+          <span class="top5-crit-desc">Mescla de <strong>Gols</strong>, <strong>Assistências</strong>, <strong>Finalizações (FD/FT/FF)</strong>, <strong>DS</strong> e <strong>Média Básica</strong></span>
+        </div>
+        <div class="top5-crit-item">
+          <span class="top5-crit-pos ata">ATA</span>
+          <span class="top5-crit-desc">Foco em <strong>Gols (G)</strong>, <strong>Assistências (A)</strong>, <strong>Finalizações</strong>, <strong>Média</strong> e <strong>Média Básica</strong></span>
+        </div>
+        <div class="top5-crit-item">
+          <span class="top5-crit-pos tec">TEC</span>
+          <span class="top5-crit-desc">Foco em <strong>Média de Pontos</strong>, <strong>Aproveitamento</strong> e <strong>Regularidade</strong></span>
+        </div>
+      </div>
+
+      <!-- Barra de Filtros e Controles Interativos -->
+      <div class="top5-toolbar">
+        <!-- Filtro por Posição Tabs -->
+        <div class="top5-pos-filters">
+          <button class="top5-pos-btn active" data-pos="all" onclick="setTop5PositionFilter('all')">Todas as Posições</button>
+          <button class="top5-pos-btn" data-pos="1" onclick="setTop5PositionFilter('1')">🧤 Goleiros</button>
+          <button class="top5-pos-btn" data-pos="2" onclick="setTop5PositionFilter('2')">🛡️ Laterais</button>
+          <button class="top5-pos-btn" data-pos="3" onclick="setTop5PositionFilter('3')">🧱 Zagueiros</button>
+          <button class="top5-pos-btn" data-pos="4" onclick="setTop5PositionFilter('4')">🧠 Meias</button>
+          <button class="top5-pos-btn" data-pos="5" onclick="setTop5PositionFilter('5')">⚡ Atacantes</button>
+          <button class="top5-pos-btn" data-pos="6" onclick="setTop5PositionFilter('6')">📋 Técnicos</button>
+        </div>
+
+        <!-- Opções Secundárias (Prováveis, Mando, Busca) -->
+        <div class="top5-secondary-controls">
+          <label class="top5-checkbox-label">
+            <input type="checkbox" id="top5-only-provaveis" checked onchange="renderTop5View()">
+            <span>⭐ Somente Prováveis (Status 7)</span>
+          </label>
+
+          <select id="top5-mando-select" class="filter-select" onchange="renderTop5View()" style="min-width: 140px;">
+            <option value="all">Todos os Mandos</option>
+            <option value="casa">🏠 Apenas Mandantes (Casa)</option>
+            <option value="fora">✈️ Apenas Visitantes (Fora)</option>
+          </select>
+
+          <div class="filter-search-box" style="flex: 1; max-width: 260px;">
+            <i data-feather="search" class="search-icon"></i>
+            <input type="text" id="top5-search-input" placeholder="Buscar jogador ou clube..." oninput="renderTop5View()">
+          </div>
+        </div>
+      </div>
+
+      <!-- Container do Grid de Rankings (6 Colunas/Cards das Posições) -->
+      <div class="top5-grid-container" id="top5-grid-container">
+        <!-- Renderizado dinamicamente via app.js -->
+      </div>
+
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- VIEW 5: TOP 5 SG (PROBABILIDADE DE SALDO DE GOLS CONTRA Z4 DA RODADA) -->
+    <!-- ========================================================================= -->
+    <div id="view-top5-sg" class="top5-view-wrapper" style="display: none;">
+      
+      <!-- Banner de Cabeçalho do Top 5 SG -->
+      <div class="top5-header-card" style="background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%); border-color: rgba(139, 92, 246, 0.3);">
+        <div class="top5-header-main">
+          <div class="top5-badge-tag" style="background: rgba(139, 92, 246, 0.2); color: #c084fc; border-color: rgba(139, 92, 246, 0.4);">
+            <i data-feather="shield"></i> PROBABILIDADE DE SG • LENDAS 2026
+          </div>
+          <h1 class="top5-main-title" style="color: #e9d5ff;">Top 5 Melhores Probabilidades de SG (Saldo de Gols)</h1>
+          <p class="top5-subtitle">
+            Cálculo matemático cruzando times mandantes com melhor saldo de gols e média defensiva enfrentando adversários do Z-4 (últimos 4 colocados) ou com ataque menos eficiente na rodada atual.
+          </p>
+        </div>
+      </div>
+
+      <!-- Container do Grid de Rankings SG -->
+      <div class="top5-grid-container" id="top5-sg-grid-container" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;">
+        <!-- Renderizado dinamicamente via app.js -->
+      </div>
+
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- VIEW 6: ESCALAÇÕES VARIADAS (ALGORITMO DE ESTRATÉGIAS & COMBINAÇÕES) -->
+    <!-- ========================================================================= -->
+    <div id="view-escalacoes-variadas" class="top5-view-wrapper" style="display: none;">
+      
+      <!-- Header / Banner das Escalações Variadas -->
+      <div class="top5-header-card" style="background: linear-gradient(135deg, #831843 0%, #0f172a 100%); border-color: rgba(236, 72, 153, 0.4);">
+        <div class="top5-header-main">
+          <div class="top5-badge-tag" style="background: rgba(236, 72, 153, 0.2); color: #f472b6; border-color: rgba(236, 72, 153, 0.4);">
+            <i data-feather="sliders"></i> ALGORITMO SUPER INTELIGENTE (+500 COMBINAÇÕES)
+          </div>
+          <h1 class="top5-main-title" style="color: #fbcfe8;">Escalações Variadas Lendas 2026</h1>
+          <p class="top5-subtitle">
+            Gerador avançado de escalações estratégicas com robô de inteligência artificial que cruza estatísticas de mando de campo, média básica, gols, assistências, defesas fechadas e limite rigoroso de patrimônio.
+          </p>
+        </div>
+      </div>
+
+      <!-- Barra de Seleção da Estratégia -->
+      <div class="top5-toolbar" style="background: #0f172a; border-color: rgba(236, 72, 153, 0.2); padding: 18px;">
+        <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
+          <div style="font-size: 0.85rem; font-weight: 800; color: #f472b6; text-transform: uppercase;">
+            🎯 Escolha a Estratégia de Escalação Desejada:
+          </div>
+
+          <div class="top5-pos-filters" style="gap: 8px;">
+            <button class="top5-pos-btn active" data-strat="bons_baratos" onclick="selectVariadasStrategy('bons_baratos', this)">
+              💰 Bons e Baratos (C$ 0 a C$ 10)
+            </button>
+            <button class="top5-pos-btn" data-strat="mandantes" onclick="selectVariadasStrategy('mandantes', this)">
+              🏠 100% Mandantes (Jogam em Casa)
+            </button>
+            <button class="top5-pos-btn" data-strat="tiro_curto" onclick="selectVariadasStrategy('tiro_curto', this)">
+              ⚡ Tiro Curto (Defesa Fechada + 2 Setores)
+            </button>
+            <button class="top5-pos-btn" data-strat="defesa_dupla" onclick="selectVariadasStrategy('defesa_dupla', this)">
+              🛡️ Defesa Dobrada (Mesclar 2 Times)
+            </button>
+          </div>
+
+          <!-- Controles dinâmicos adicionais (Seleção de Times para Defesa Dobrada) -->
+          <div id="variadas-extra-controls" style="display: none; background: rgba(255,255,255,0.04); padding: 14px; border-radius: 12px; border: 1px solid rgba(236,72,153,0.3); margin-top: 6px;">
+            <div style="font-size: 0.8rem; font-weight: 800; color: #fff; margin-bottom: 8px;">
+              🛡️ Selecione os 2 Times para Dobrar a Defesa:
+            </div>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+              <select id="select-defesa-team-1" class="filter-select" style="min-width: 200px;">
+                <!-- Preenchido via JS -->
+              </select>
+              <select id="select-defesa-team-2" class="filter-select" style="min-width: 200px;">
+                <!-- Preenchido via JS -->
+              </select>
+              <button onclick="generateVariadasLineup()" class="nav-btn nav-btn-primary" style="padding: 8px 16px; background: linear-gradient(135deg, #ec4899, #be185d); font-weight: 800; color: #fff;">
+                ⚡ Gerar Combinações
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Result Grid com o Time Gerado + Botão de Aplicar no Campinho -->
+      <div id="variadas-result-container" style="margin-top: 24px;">
+        <!-- Renderizado via app.js -->
+      </div>
+
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- VIEW 4: CLASSIFICAÇÃO OFICIAL DO BRASILEIRÃO BETANO 2026 -->
+    <!-- ========================================================================= -->
+    <div id="view-classificacao" class="standings-container" style="display: none;">
+      
+      <!-- Top Banner / Header da Classificação -->
+      <div class="top5-header-card" style="margin-bottom: 20px;">
+        <div class="top5-header-main">
+          <div class="top5-badge-tag" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa; border-color: rgba(59, 130, 246, 0.3);">
+            <i data-feather="bar-chart-2"></i> TABELA OFICIAL • SÉRIE A 2026
+          </div>
+          <h1 class="top5-main-title">Classificação do Campeonato Brasileiro</h1>
+          <p class="top5-subtitle">
+            Acompanhe a tabela de classificação ao vivo com aproveitamento, saldo de gols e zonas da Libertadores, Sul-Americana e Rebaixamento.
+          </p>
+        </div>
+      </div>
+
+      <!-- WIDGET EMBED OFICIAL SOFASCORE -->
+      <div style="text-align: center;">
+        <div style="max-width: 768px; margin: 0 auto; background: #0b0f15; padding: 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+          <iframe id="sofa-standings-embed-83-87678" src="https://widgets.sofascore.com/pt-BR/embed/tournament/83/season/87678/standings/Brasileiro%20Serie%20A%202026?widgetTitle=Brasileiro%20Serie%20A%202026&showCompetitionLogo=true" style="height:1123px!important;max-width:768px!important;width:100%!important;border-radius:12px;border:none;" frameborder="0" scrolling="no"></iframe>
+          <div style="font-size:12px;font-family:Arial,sans-serif;text-align:left;padding: 8px 4px; color: var(--text-muted);">
+            Classificação fornecida por <a target="_blank" href="https://www.sofascore.com/pt/football/tournament/brazil/brasileirao-serie-a/325#id:87678" style="color: var(--cartola-orange); font-weight: 700;">Sofascore</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ===== MODAL / DRAWER DE SELEÇÃO DE JOGADORES (MERCADO COM FILTROS AVANÇADOS) ===== -->
+  <div class="market-drawer-overlay" id="market-drawer-overlay">
+    <div class="market-drawer-card">
+      
+      <div class="market-drawer-header">
+        <div>
+          <h2 style="font-size: 1.15rem; font-weight: 800; color: #fff; margin: 0;" id="drawer-slot-title">Escalar Atleta</h2>
+          <span style="font-size: 0.78rem; color: var(--text-muted);" id="drawer-slot-sub">Selecione o jogador para esta posição</span>
+        </div>
+        <button class="scout-modal-close" onclick="closeMarketDrawer()">&times;</button>
+      </div>
+
+      <!-- Filtros Completos (Posição, Status, Scouts: Média, Média Básica, Desarmes, SG, Gols, Defesas, Assistências) -->
+      <div class="market-drawer-filters">
+        <!-- Linha 1: Busca e Filtro de Posição -->
+        <div class="filter-row">
+          <input type="text" id="market-search-input" class="filter-input" placeholder="🔍 Buscar jogador ou time..." style="flex: 1; min-width: 180px;" oninput="filterMarketPlayers()">
+          
+          <select id="market-position-select" class="filter-select" onchange="filterMarketPlayers()">
+            <option value="0">Todas as Posições</option>
+            <option value="1">Goleiros (GOL)</option>
+            <option value="2">Laterais (LAT)</option>
+            <option value="3">Zagueiros (ZAG)</option>
+            <option value="4">Meias (MEI)</option>
+            <option value="5">Atacantes (ATA)</option>
+            <option value="6">Técnicos (TEC)</option>
+          </select>
+
+          <!-- Filtro de Ordenação por Estatística / Scout -->
+          <select id="market-sort-select" class="filter-select" onchange="filterMarketPlayers()">
+            <option value="media_desc">⭐ Maior Média de Pontos</option>
+            <option value="media_basica_desc">🛡️ Maior Média Básica</option>
+            <option value="desarmes_desc">⚔️ Mais Desarmes (DS)</option>
+            <option value="sg_desc">🥅 Mais Jogos sem Sofrer Gol (SG)</option>
+            <option value="gols_desc">⚽ Mais Gols (G)</option>
+            <option value="defesas_desc">🧤 Mais Defesas de Goleiro (DE)</option>
+            <option value="assistencias_desc">👟 Mais Assistências (A)</option>
+            <option value="preco_asc">💰 Mais Baratos (Econômicos)</option>
+            <option value="preco_desc">💎 Mais Caros</option>
+          </select>
+        </div>
+
+        <!-- Linha 2: Status Pills e Limite de Orçamento -->
+        <div class="filter-row" style="justify-content: space-between;">
+          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+            <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted);">Status:</span>
+            <button class="filter-pill-btn active" id="status-filter-all" onclick="setStatusFilter('all', this)">Todos</button>
+            <button class="filter-pill-btn" id="status-filter-7" onclick="setStatusFilter('7', this)">✅ Prováveis</button>
+            <button class="filter-pill-btn" id="status-filter-2" onclick="setStatusFilter('2', this)">⚠️ Dúvidas</button>
+          </div>
+
+          <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: 700; color: #fff; cursor: pointer;">
+            <input type="checkbox" id="filter-cabem-saldo" onchange="filterMarketPlayers()" checked>
+            <span id="drawer-filter-budget-text">Apenas que cabem no saldo (≤ C$ <span id="drawer-saldo-label">150.00</span>)</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Lista dos Jogadores Disponíveis -->
+      <div class="market-player-list" id="market-player-list">
+        <!-- Rendered via JS -->
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== SCOUT DO ATLETA MODAL ===== -->
+  <div class="modal-backdrop" id="player-modal">
+    <div class="scout-modal-card">
+      
+      <div class="scout-modal-top">
+        <div class="scout-modal-title">Scout do atleta</div>
+        <button class="scout-modal-close" id="modal-close-btn">&times;</button>
+      </div>
+
+      <div class="scout-player-header">
+        <div class="scout-player-crest" id="scout-crest-box">
+          <img src="" id="scout-player-crest-img" alt="Escudo">
+        </div>
+        <div>
+          <div class="scout-player-name" id="scout-player-name">Nome do Jogador</div>
+          <div class="scout-player-sub" id="scout-player-sub">PAL • ZAG • C$ 10.56</div>
+        </div>
+      </div>
+
+      <!-- 5 Top Stat Boxes -->
+      <div class="scout-stat-banner">
+        <div class="scout-box">
+          <div class="scout-box-label">MÉDIA CARTOLA</div>
+          <div class="scout-box-val" id="scout-media-cartola">4.71</div>
+          <div class="scout-box-sub">oficial API</div>
+        </div>
+        <div class="scout-box">
+          <div class="scout-box-label">JOGOS</div>
+          <div class="scout-box-val" id="scout-jogos-num">19</div>
+          <div class="scout-box-sub">Brasileirão</div>
+        </div>
+        <div class="scout-box">
+          <div class="scout-box-label">ÚLTIMA</div>
+          <div class="scout-box-val" id="scout-ultima-pont">0.0</div>
+          <div class="scout-box-sub" id="scout-ultima-rodada">R22</div>
+        </div>
+        <div class="scout-box">
+          <div class="scout-box-label">ESTIMADA</div>
+          <div class="scout-box-val green" id="scout-estimada">4.8</div>
+          <div class="scout-box-sub">pontuar</div>
+        </div>
+        <div class="scout-box">
+          <div class="scout-box-label">MÍN. VAL.</div>
+          <div class="scout-box-val orange" id="scout-min-val">2.26</div>
+          <div class="scout-box-sub">necessário</div>
+        </div>
+      </div>
+
+      <!-- Médias Detalhadas List -->
+      <div class="scout-detail-list">
+        <div class="scout-detail-row" id="row-oficial">
+          <div class="scout-detail-label">
+            Média oficial (Cartola)
+            <small>REFERÊNCIA</small>
+          </div>
+          <div class="scout-detail-val" id="scout-detail-oficial">4.71 pts</div>
+        </div>
+        <div class="scout-detail-row" id="row-casa">
+          <div class="scout-detail-label" id="label-casa">
+            Média jogando em casa (<span id="jogos-casa-count">0</span>j)
+            <small id="label-casa-tag">REFERÊNCIA</small>
+          </div>
+          <div class="scout-detail-val" id="scout-detail-casa">2.35 pts</div>
+        </div>
+        <div class="scout-detail-row" id="row-fora">
+          <div class="scout-detail-label" id="label-fora">
+            Média jogando fora (<span id="jogos-fora-count">0</span>j)
+            <small id="label-fora-tag">REFERÊNCIA</small>
+          </div>
+          <div class="scout-detail-val" id="scout-detail-fora">5.23 pts</div>
+        </div>
+        <div class="scout-detail-row">
+          <div class="scout-detail-label">
+            Média básica (só scouts básicos)
+            <small>PISO ESTIMADO</small>
+          </div>
+          <div class="scout-detail-val" id="scout-detail-basica">2.96 pts</div>
+        </div>
+        <div class="scout-detail-row">
+          <div class="scout-detail-label">
+            Ajuste de confronto vs adversário
+            <small id="scout-detail-ajuste-sub">-8% • 4°</small>
+          </div>
+          <div class="scout-detail-val" id="scout-detail-ajuste">+0.15 pts</div>
+        </div>
+      </div>
+
+      <!-- Confronto da Rodada Box -->
+      <div class="scout-matchup-box">
+        <div class="scout-matchup-title">CONFRONTO DA RODADA</div>
+        <div class="scout-matchup-row">
+          <div class="scout-matchup-team">
+            <img src="" id="matchup-mandante-crest" class="scout-matchup-crest">
+            <span class="scout-matchup-name" id="matchup-mandante-name">FLU</span>
+            <span class="scout-matchup-side">CASA</span>
+          </div>
+          <div style="color: var(--cartola-orange); font-size: 1.1rem; display: flex; flex-direction: column; align-items: center;">
+            <i data-feather="navigation" style="transform: rotate(45deg); width: 18px; height: 18px;"></i>
+            <span style="font-size: 0.65rem; font-weight: 800;" id="matchup-local-tag">FORA</span>
+          </div>
+          <div class="scout-matchup-team">
+            <img src="" id="matchup-visitante-crest" class="scout-matchup-crest">
+            <span class="scout-matchup-name" id="matchup-visitante-name">PAL</span>
+            <span class="scout-matchup-side">FORA</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Últimas 7 Rodadas com Tabs -->
+      <div class="scout-rounds-title">
+        <span>ÚLTIMAS 7 RODADAS</span>
+        <div class="scout-rounds-tabs">
+          <button class="scout-rounds-tab active" onclick="filterScoutRounds('geral', this)">GERAL</button>
+          <button class="scout-rounds-tab" onclick="filterScoutRounds('casa', this)">CASA</button>
+          <button class="scout-rounds-tab" onclick="filterScoutRounds('fora', this)">FORA</button>
+        </div>
+      </div>
+
+      <div class="scout-rounds-grid" id="scout-rounds-grid">
+        <!-- Rendered via JS -->
+      </div>
+
+      <!-- Scouts Positivos -->
+      <div class="scouts-grid-section">
+        <div class="scouts-grid-title pos">Scouts positivos (soma no período)</div>
+        <div class="scout-pills-grid" id="scout-positivos-grid"></div>
+      </div>
+
+      <!-- Scouts Negativos -->
+      <div class="scouts-grid-section">
+        <div class="scouts-grid-title neg">Scouts negativos (soma no período)</div>
+        <div class="scout-pills-grid" id="scout-negativos-grid"></div>
+      </div>
+
+      <div class="scout-footer-disclaimer">
+        Estimativa = média jogando fora/casa + ajuste do confronto, com piso na média básica. Ajuste do confronto é derivado da posição do adversário na tabela. Referência, não garante pontuação.
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL MODERNO DE AÇÕES DO JOGADOR ESCALADO (CAPITÃO, RESERVA DE LUXO, ETC) -->
+  <div id="player-action-modal" class="modal-backdrop" style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 10000; align-items: center; justify-content: center; padding: 1.5rem;" onclick="if(event.target === this) closePlayerActionModal()">
+    <div class="scout-modal-content" style="max-width: 420px; width: 100%; padding: 24px; text-align: center; border-radius: 20px; background: #0f172a; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 25px 60px rgba(0,0,0,0.95); position: relative; margin: auto;">
+      <div style="display: flex; justify-content: flex-end;">
+        <button class="scout-modal-close" onclick="closePlayerActionModal()" style="font-size: 1.2rem; cursor: pointer; background: transparent; border: none; color: #94a3b8;">✕</button>
+      </div>
+      
+      <div style="margin-top: -10px; margin-bottom: 16px;">
+        <div style="position: relative; width: 72px; height: 72px; margin: 0 auto 10px auto;">
+          <img id="modal-player-action-photo" src="" alt="" style="width: 72px; height: 72px; border-radius: 50%; object-fit: cover; border: 3px solid var(--cartola-orange); background: #1e293b;">
+          <img id="modal-player-action-crest" src="" alt="" style="position: absolute; bottom: 0; right: 0; width: 24px; height: 24px; object-fit: contain;">
+        </div>
+        <h2 id="modal-player-action-name" style="font-size: 1.25rem; font-weight: 800; color: #fff; margin-bottom: 2px;">Jogador</h2>
+        <div id="modal-player-action-sub" style="font-size: 0.82rem; color: var(--text-muted);">Posição • Clube • Preço</div>
+      </div>
+
+      <!-- Seletor Dropdown de Capitão (para Titulares) -->
+      <div id="container-dropdown-captain" style="margin-bottom: 14px; text-align: left; display: none;">
+        <label style="display: block; font-size: 0.78rem; font-weight: 800; color: #f59e0b; margin-bottom: 6px; text-transform: uppercase;">
+          👑 Escolher Capitão do Setor (<span id="label-captain-sector">ATAQUE</span>)
+        </label>
+        <select id="select-modal-captain" class="filter-select" style="width: 100%; padding: 10px 12px; background: #1e293b; border-color: #f59e0b; color: #fff; font-weight: 700;" onchange="handleSelectCaptainFromDropdown(this.value)">
+          <!-- Preenchido via JS -->
+        </select>
+      </div>
+
+      <!-- Seletor Dropdown de Reserva de Luxo (para Reservas) -->
+      <div id="container-dropdown-luxo" style="margin-bottom: 14px; text-align: left; display: none;">
+        <label style="display: block; font-size: 0.78rem; font-weight: 800; color: #c084fc; margin-bottom: 6px; text-transform: uppercase;">
+          ⭐ Escolher Reserva de Luxo da Posição (<span id="label-luxo-sector">ATAQUE</span>)
+        </label>
+        <select id="select-modal-luxo" class="filter-select" style="width: 100%; padding: 10px 12px; background: #1e293b; border-color: #8b5cf6; color: #fff; font-weight: 700;" onchange="handleSelectLuxoFromDropdown(this.value)">
+          <!-- Preenchido via JS -->
+        </select>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 14px;">
+        <!-- Botão Capitão Direto -->
+        <button id="btn-modal-action-captain" class="nav-btn nav-btn-primary" style="padding: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 12px; background: linear-gradient(135deg, #f59e0b, #d97706); color: #000;">
+          <span style="background: #000; color: #f59e0b; border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 900;">C</span>
+          <span id="btn-modal-action-captain-text">Tornar Capitão (Pontuação x1.5)</span>
+        </button>
+
+        <!-- Botão Reserva de Luxo Direto -->
+        <button id="btn-modal-action-luxo" class="nav-btn" style="padding: 12px; font-weight: 800; display: none; align-items: center; justify-content: center; gap: 8px; border-radius: 12px; background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: #fff; border: none;">
+          <span>⭐</span>
+          <span id="btn-modal-action-luxo-text">Definir como Reserva de Luxo</span>
+        </button>
+
+        <!-- Botão Substituir -->
+        <button id="btn-modal-action-substitute" class="nav-btn" style="padding: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 12px; background: #1e293b; color: #e2e8f0; border: 1px solid rgba(255,255,255,0.1);">
+          <i data-feather="refresh-cw" style="width: 16px; height: 16px;"></i>
+          <span>Substituir Jogador</span>
+        </button>
+
+        <!-- Botão Remover -->
+        <button id="btn-modal-action-remove" class="nav-btn" style="padding: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 12px; background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3);">
+          <i data-feather="trash-2" style="width: 16px; height: 16px;"></i>
+          <span>Remover da Escalação</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div style="max-width: 1440px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+      <div>© 2026 <strong>Lendas do Cartola Prováveis 2026</strong> • Brasileirão Série A</div>
+      <div>Sistema Oficial de Escalações &amp; Scouts</div>
+    </div>
+  </footer>
+
+  <script src="/js/app.js"></script>
+  <script>
+    feather.replace();
+
+    function checkAuthGate() {
+      const session = localStorage.getItem('cartola_session');
+      if (session) {
+        try {
+          const user = JSON.parse(session);
+          document.getElementById('auth-gateway').style.display = 'none';
+          document.getElementById('user-name-display').textContent = user.username;
+          if (user.role === 'admin') {
+            document.getElementById('btn-admin-nav').style.display = 'inline-flex';
+          }
+          feather.replace();
+          return;
+        } catch(e) {}
+      }
+      document.getElementById('auth-gateway').style.display = 'flex';
+      feather.replace();
+    }
+
+    async function processLogin() {
+      const u = document.getElementById('login-user-input').value.trim();
+      const p = document.getElementById('login-pass-input').value.trim();
+      const alertBox = document.getElementById('login-error-alert');
+      alertBox.style.display = 'none';
+
+      if (!u) {
+        alertBox.textContent = 'Informe o nome de usuário.';
+        alertBox.style.display = 'block';
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: u, password: p })
+        });
+        const data = await res.json();
+
+        if (data.sucesso) {
+          localStorage.setItem('cartola_session', JSON.stringify({
+            username: data.username,
+            role: data.role,
+            token: data.token
+          }));
+          location.reload();
+        } else {
+          alertBox.textContent = data.mensagem || data.error || 'Usuário ou senha inválidos.';
+          alertBox.style.display = 'block';
+        }
+      } catch (err) {
+        alertBox.textContent = 'Erro de conexão: ' + err.message;
+        alertBox.style.display = 'block';
+      }
+    }
+
+    function logoutSession() {
+      localStorage.removeItem('cartola_session');
+      location.reload();
+    }
+
+    // Allow Enter key on login
+    document.getElementById('login-pass-input').addEventListener('keyup', function(e) {
+      if (e.key === 'Enter') processLogin();
+    });
+    document.getElementById('login-user-input').addEventListener('keyup', function(e) {
+      if (e.key === 'Enter') processLogin();
+    });
+
+    window.addEventListener('DOMContentLoaded', checkAuthGate);
+  </script>
+</body>
+</html>

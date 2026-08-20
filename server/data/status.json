@@ -1,0 +1,22 @@
+{
+  "2": {
+    "nome": "Dúvida",
+    "id": 2
+  },
+  "3": {
+    "nome": "Suspenso",
+    "id": 3
+  },
+  "5": {
+    "nome": "Contundido",
+    "id": 5
+  },
+  "6": {
+    "nome": "Nulo",
+    "id": 6
+  },
+  "7": {
+    "nome": "Provável",
+    "id": 7
+  }
+}

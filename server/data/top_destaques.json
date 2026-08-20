@@ -1,0 +1,72 @@
+[
+  {
+    "atleta_id": 105436,
+    "apelido": "Carrascal",
+    "pontuacao": 24.9,
+    "clube_abrev": "FLA",
+    "clube_escudo": "/images/Flamengo/Flamengo.png"
+  },
+  {
+    "atleta_id": 68938,
+    "apelido": "Giovanni Augusto",
+    "pontuacao": 23.2,
+    "clube_abrev": "CHA",
+    "clube_escudo": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/CHA/60x60.png"
+  },
+  {
+    "atleta_id": 98909,
+    "apelido": "Cuello",
+    "pontuacao": 20.5,
+    "clube_abrev": "CAM",
+    "clube_escudo": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/CAM/60x60.png"
+  },
+  {
+    "atleta_id": 94583,
+    "apelido": "Pedro",
+    "pontuacao": 20.2,
+    "clube_abrev": "FLA",
+    "clube_escudo": "/images/Flamengo/Flamengo.png"
+  },
+  {
+    "atleta_id": 104783,
+    "apelido": "Acevedo",
+    "pontuacao": 15.4,
+    "clube_abrev": "BAH",
+    "clube_escudo": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/BAH/60x60.png"
+  },
+  {
+    "atleta_id": 109096,
+    "apelido": "Plata",
+    "pontuacao": 14.6,
+    "clube_abrev": "FLA",
+    "clube_escudo": "/images/Flamengo/Flamengo.png"
+  },
+  {
+    "atleta_id": 96591,
+    "apelido": "Renan Lodi",
+    "pontuacao": 14.0,
+    "clube_abrev": "CAM",
+    "clube_escudo": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/CAM/60x60.png"
+  },
+  {
+    "atleta_id": 84847,
+    "apelido": "Luan Peres",
+    "pontuacao": 13.5,
+    "clube_abrev": "SAN",
+    "clube_escudo": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/SAN/60x60.png"
+  },
+  {
+    "atleta_id": 72605,
+    "apelido": "Vitor Hugo",
+    "pontuacao": 12.7,
+    "clube_abrev": "CAM",
+    "clube_escudo": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/CAM/60x60.png"
+  },
+  {
+    "atleta_id": 107989,
+    "apelido": "Carbonero",
+    "pontuacao": 12.0,
+    "clube_abrev": "INT",
+    "clube_escudo": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/INT/60x60.png"
+  }
+]

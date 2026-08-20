@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Lendas Cartola Sync</title>
+  <style>
+    body {
+      width: 330px; margin: 0; padding: 16px;
+      background: #0d121a; color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    .header {
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 14px;
+    }
+    .badge {
+      background: #ff6200; color: #000; font-size: 10px; font-weight: 900;
+      padding: 3px 6px; border-radius: 4px; letter-spacing: 0.5px;
+    }
+    .title { font-size: 15px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+    .mascot-thumb { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid #ff6200; object-fit: cover; }
+    .status-card {
+      background: #141b26; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px;
+      padding: 12px; margin-bottom: 14px;
+    }
+    .status-row { display: flex; align-items: center; justify-content: space-between; font-size: 12px; margin-bottom: 8px; }
+    .status-row:last-child { margin-bottom: 0; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+    .status-dot.green { background: #10b981; box-shadow: 0 0 8px #10b981; }
+    .status-dot.red { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
+    .status-dot.yellow { background: #fbbf24; box-shadow: 0 0 8px #fbbf24; }
+    .btn {
+      display: block; width: 100%; box-sizing: border-box; text-align: center;
+      background: linear-gradient(135deg, #ff6200, #e05600); color: #fff;
+      border: none; border-radius: 8px; padding: 10px; font-size: 13px; font-weight: 700;
+      text-decoration: none; cursor: pointer; margin-bottom: 8px;
+    }
+    .btn:hover { filter: brightness(1.1); }
+    .btn-secondary {
+      background: #1e2838; color: #cbd5e1; border: 1px solid rgba(255,255,255,0.1);
+    }
+    .notice-box {
+      background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.3);
+      border-radius: 8px; padding: 10px; font-size: 11px; color: #fbbf24; line-height: 1.4;
+      margin-bottom: 12px; display: none;
+    }
+    .footer { font-size: 11px; color: #64748b; text-align: center; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="title">
+      <img src="mascote.png" alt="Mascote" class="mascot-thumb">
+      <span>Lendas Cartola Sync</span>
+    </div>
+    <div class="badge">ATIVO</div>
+  </div>
+
+  <div class="status-card">
+    <div class="status-row">
+      <span style="color: #94a3b8;">Conta Globo (Cartola):</span>
+      <span id="auth-status"><span class="status-dot green"></span>Conectado</span>
+    </div>
+    <div class="status-row">
+      <span style="color: #94a3b8;">Time Identificado:</span>
+      <strong id="time-name" style="color: #ff6200;">G4 do Cartola FC</strong>
+    </div>
+    <div class="status-row">
+      <span style="color: #94a3b8;">Servidor Local:</span>
+      <span id="server-status"><span class="status-dot green"></span>Online (8080)</span>
+    </div>
+  </div>
+
+  <div class="notice-box" id="server-notice">
+    ⚠️ <strong>Servidor desligado:</strong> Dê 2 cliques no arquivo <strong>INICIAR_CARTOLA.bat</strong> para ligar a plataforma.
+  </div>
+
+  <button class="btn" id="btn-open-app">🚀 Abrir Plataforma Lendas</button>
+  <button class="btn btn-secondary" id="btn-open-cartola">🌐 Abrir Site Oficial do Cartola</button>
+
+  <div class="footer">
+    Sincronização 1-Clique Ativa
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

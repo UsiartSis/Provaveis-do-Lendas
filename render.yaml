@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: lendas-do-cartola-2026
+    env: python
+    buildCommand: ""
+    startCommand: python server/server.py
+    envVars:
+      - key: PORT
+        value: 8080

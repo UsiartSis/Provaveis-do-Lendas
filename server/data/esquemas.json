@@ -1,0 +1,86 @@
+[
+  {
+    "esquema_id": 1,
+    "nome": "3-4-3",
+    "posicoes": {
+      "goleiro": 1,
+      "zagueiro": 3,
+      "lateral": 0,
+      "meia": 4,
+      "atacante": 3,
+      "tecnico": 1
+    }
+  },
+  {
+    "esquema_id": 2,
+    "nome": "3-5-2",
+    "posicoes": {
+      "goleiro": 1,
+      "zagueiro": 3,
+      "lateral": 0,
+      "meia": 5,
+      "atacante": 2,
+      "tecnico": 1
+    }
+  },
+  {
+    "esquema_id": 3,
+    "nome": "4-3-3",
+    "posicoes": {
+      "goleiro": 1,
+      "zagueiro": 2,
+      "lateral": 2,
+      "meia": 3,
+      "atacante": 3,
+      "tecnico": 1
+    }
+  },
+  {
+    "esquema_id": 4,
+    "nome": "4-4-2",
+    "posicoes": {
+      "goleiro": 1,
+      "zagueiro": 2,
+      "lateral": 2,
+      "meia": 4,
+      "atacante": 2,
+      "tecnico": 1
+    }
+  },
+  {
+    "esquema_id": 5,
+    "nome": "4-5-1",
+    "posicoes": {
+      "goleiro": 1,
+      "zagueiro": 2,
+      "lateral": 2,
+      "meia": 5,
+      "atacante": 1,
+      "tecnico": 1
+    }
+  },
+  {
+    "esquema_id": 6,
+    "nome": "5-3-2",
+    "posicoes": {
+      "goleiro": 1,
+      "zagueiro": 3,
+      "lateral": 2,
+      "meia": 3,
+      "atacante": 2,
+      "tecnico": 1
+    }
+  },
+  {
+    "esquema_id": 7,
+    "nome": "5-4-1",
+    "posicoes": {
+      "goleiro": 1,
+      "zagueiro": 3,
+      "lateral": 2,
+      "meia": 4,
+      "atacante": 1,
+      "tecnico": 1
+    }
+  }
+]

@@ -1,0 +1,202 @@
+[
+  {
+    "id": 2305,
+    "nome": "Mirassol",
+    "abreviacao": "MIR",
+    "slug": "mirassol",
+    "folder": "MIR",
+    "escudo": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/MIR/60x60.png",
+    "escudo_oficial": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/MIR/60x60.png",
+    "escudo_local": null
+  },
+  {
+    "id": 262,
+    "nome": "Flamengo",
+    "abreviacao": "FLA",
+    "slug": "flamengo",
+    "folder": "Flamengo",
+    "escudo": "/images/Flamengo/Flamengo.png",
+    "escudo_oficial": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/FLA/60x60.png",
+    "escudo_local": "/images/Flamengo/Flamengo.png"
+  },
+  {
+    "id": 263,
+    "nome": "Botafogo",
+    "abreviacao": "BOT",
+    "slug": "botafogo",
+    "folder": "BOT",
+    "escudo": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/BOT/60x60.png",
+    "escudo_oficial": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/BOT/60x60.png",
+    "escudo_local": null
+  },
+  {
+    "id": 264,
+    "nome": "Corinthians",
+    "abreviacao": "COR",
+    "slug": "corinthians",
+    "folder": "COR",
+    "escudo": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/COR/60x60.png",
+    "escudo_oficial": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/COR/60x60.png",
+    "escudo_local": null
+  },
+  {
+    "id": 265,
+    "nome": "Bahia",
+    "abreviacao": "BAH",
+    "slug": "bahia",
+    "folder": "BAH",
+    "escudo": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/BAH/60x60.png",
+    "escudo_oficial": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/BAH/60x60.png",
+    "escudo_local": null
+  },
+  {
+    "id": 266,
+    "nome": "Fluminense",
+    "abreviacao": "FLU",
+    "slug": "fluminense",
+    "folder": "Fluminense",
+    "escudo": "/images/Fluminense/Fluminense.png",
+    "escudo_oficial": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/FLU/60x60.png",
+    "escudo_local": "/images/Fluminense/Fluminense.png"
+  },
+  {
+    "id": 267,
+    "nome": "Vasco",
+    "abreviacao": "VAS",
+    "slug": "vasco",
+    "folder": "VAS",
+    "escudo": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/VAS/60x60.png",
+    "escudo_oficial": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/VAS/60x60.png",
+    "escudo_local": null
+  },
+  {
+    "id": 275,
+    "nome": "Palmeiras",
+    "abreviacao": "PAL",
+    "slug": "palmeiras",
+    "folder": "PAL",
+    "escudo": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/PAL/60x60.png",
+    "escudo_oficial": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/PAL/60x60.png",
+    "escudo_local": null
+  },
+  {
+    "id": 276,
+    "nome": "São Paulo",
+    "abreviacao": "SAO",
+    "slug": "sao-paulo",
+    "folder": "SAO",
+    "escudo": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/SAO/60x60.png",
+    "escudo_oficial": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/SAO/60x60.png",
+    "escudo_local": null
+  },
+  {
+    "id": 277,
+    "nome": "Santos",
+    "abreviacao": "SAN",
+    "slug": "santos",
+    "folder": "SAN",
+    "escudo": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/SAN/60x60.png",
+    "escudo_oficial": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/SAN/60x60.png",
+    "escudo_local": null
+  },
+  {
+    "id": 280,
+    "nome": "Red Bull Bragantino",
+    "abreviacao": "RBB",
+    "slug": "bragantino",
+    "folder": "RBB",
+    "escudo": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/RBB/60x60.png",
+    "escudo_oficial": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/RBB/60x60.png",
+    "escudo_local": null
+  },
+  {
+    "id": 282,
+    "nome": "Atlético-MG",
+    "abreviacao": "CAM",
+    "slug": "atletico-mg",
+    "folder": "CAM",
+    "escudo": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/CAM/60x60.png",
+    "escudo_oficial": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/CAM/60x60.png",
+    "escudo_local": null
+  },
+  {
+    "id": 283,
+    "nome": "Cruzeiro",
+    "abreviacao": "CRU",
+    "slug": "cruzeiro",
+    "folder": "CRU",
+    "escudo": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/CRU/60x60.png",
+    "escudo_oficial": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/CRU/60x60.png",
+    "escudo_local": null
+  },
+  {
+    "id": 284,
+    "nome": "Grêmio",
+    "abreviacao": "GRE",
+    "slug": "gremio",
+    "folder": "GRE",
+    "escudo": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/GRE/60x60.png",
+    "escudo_oficial": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/GRE/60x60.png",
+    "escudo_local": null
+  },
+  {
+    "id": 285,
+    "nome": "Internacional",
+    "abreviacao": "INT",
+    "slug": "internacional",
+    "folder": "INT",
+    "escudo": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/INT/60x60.png",
+    "escudo_oficial": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/INT/60x60.png",
+    "escudo_local": null
+  },
+  {
+    "id": 287,
+    "nome": "Vitória",
+    "abreviacao": "VIT",
+    "slug": "vitoria",
+    "folder": "VIT",
+    "escudo": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/VIT/60x60.png",
+    "escudo_oficial": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/VIT/60x60.png",
+    "escudo_local": null
+  },
+  {
+    "id": 293,
+    "nome": "Athletico-PR",
+    "abreviacao": "CAP",
+    "slug": "atletico-pr",
+    "folder": "CAP",
+    "escudo": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/CAP/60x60.png",
+    "escudo_oficial": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/CAP/60x60.png",
+    "escudo_local": null
+  },
+  {
+    "id": 294,
+    "nome": "Coritiba",
+    "abreviacao": "CFC",
+    "slug": "coritiba",
+    "folder": "CFC",
+    "escudo": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/CFC/60x60.png",
+    "escudo_oficial": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/CFC/60x60.png",
+    "escudo_local": null
+  },
+  {
+    "id": 315,
+    "nome": "Chapecoense",
+    "abreviacao": "CHA",
+    "slug": "chapecoense",
+    "folder": "CHA",
+    "escudo": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/CHA/60x60.png",
+    "escudo_oficial": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/CHA/60x60.png",
+    "escudo_local": null
+  },
+  {
+    "id": 364,
+    "nome": "Remo",
+    "abreviacao": "REM",
+    "slug": "remo",
+    "folder": "REM",
+    "escudo": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/REM/60x60.png",
+    "escudo_oficial": "https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/clubes_2026/escudos/REM/60x60.png",
+    "escudo_local": null
+  }
+]
